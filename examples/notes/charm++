@@ -1,0 +1,18 @@
+for i in `cat $OAR_NODE_FILE|sort -u`; do ssh root@$i "aptitude install -y liblz-dev lib32z-dev"; done
+
+./build charm++ net-linux-x86_64 -O3
+
+
+# build nodeslist
+set NODES = `cat $HOST_FILE`
+set NODELIST = ./nodelist
+echo group main >! $NODELIST
+foreach node ( $nodes )
+  echo host $node >> $NODELIST
+end
+@ NUMPROCS = 2 * $#NODES
+
+make clean ; make ; make projections
+
+charmrun $PROG +p$NUMPROCS ++nodelist $NODELIST <configfile>
+

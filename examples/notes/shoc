@@ -1,0 +1,11 @@
+sudo aptitude install nvidia-cuda-dev nvidia-cuda-toolkit nvidia-cuda-gdb automake1.4 mpi-default-bin mpi-default-dev nvidia-opencl-common nvidia-opencl-icd
+cd $SHOC_ROOT; make clean distclean
+./configure --without-opencl
+make
+
+
+
+
+
+
+

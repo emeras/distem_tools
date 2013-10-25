@@ -1,0 +1,13 @@
+### EXPE
+
+#Now, we will modify the latency of the network links. In this experiment, we want to set a limitation on the interface of each virtual nodes (in output for each interface) in order to simulate a latency of 20ms on the network link. From the coordinator, let’s run:
+
+coord> distem --config-viface vnode=node-1,iface=if0,latency=20ms,\
+ direction=OUTPUT
+
+coord> distem --config-viface vnode=node-2,iface=if0,latency=20ms,\
+ direction=OUTPUT
+
+
+
+
