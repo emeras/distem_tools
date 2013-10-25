@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# oarsub -t deploy -l slash_22=1+nodes=4,walltime=8 'sleep 999999'
-# kadeploy3 -f $OAR_NODE_FILE -e wheezy-x64-nfs -k
+#oarsub -t deploy -l slash_22=1+nodes=4,walltime=8 'katapult3 -e wheezy-x64-nfs -c --sleep'
 
-katapult3 -e wheezy-x64-nfs -c --sleep # -- sleep 999999
+katapult3 -e wheezy-x64-nfs -c
 
 
 SERVER=`cat $OAR_NODEFILE | sort -u | head -1`
