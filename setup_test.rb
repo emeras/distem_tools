@@ -71,10 +71,11 @@ Distem.client do |cl|
   cl.set_global_etchosts 
   cl.set_global_arptable
 
-  #puts 'Finalizing VNodes Config'
-  #vnodelist.each do |node|
+  puts 'Finalizing VNodes Config'
+  vnodelist.each do |node|
   #  cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
-  #end
+  #  cl.vnode_execute(node, "aptitude install -y liblz-dev lib32z-dev")
+  end
 
   puts 'Terminated...'
 end
