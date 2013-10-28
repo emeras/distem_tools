@@ -63,13 +63,23 @@ Distem.client do |cl|
   end
 
   puts 'Starting VNodes'
-  # Start nodes in parallel
+  # Start nodes
   cl.vnodes_start(vnodelist, async = false)
 
   puts 'Waiting for VNodes to boot...'
-  sleep 120
-
-
+  # Now wait each virtual node to be started -- i.e. its status
+  # is set to 'RUNNING'
+  vnodelist.each do |nodename|
+    begin
+      # Getting informations about the specified virtual node
+      ret = cl.vnode_info(nodename)
+      sleep(0.2)
+    # Loops until its status is set to RUNNING
+    end until ret['status'] == Distem::Resource::Status::RUNNING
+    puts "\t#{nodename} OK"
+  end
+  # Wait one more minute, in some cases running doesn't mean ssh is available
+  sleep 60
   puts 'Setting VNodes Network info'
   # Fill arp table and etc hosts info
   cl.set_global_etchosts 
@@ -77,8 +87,6 @@ Distem.client do |cl|
 
   puts 'Finalizing VNodes Config'
   vnodelist.each do |node|
-    ## pp node
-    #cl.vnode_execute(node, 'hostname')
     cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc ; source ~/.bashrc")
     cl.vnode_execute(node, "apt-get install -y liblz-dev lib32z-dev")
   end
