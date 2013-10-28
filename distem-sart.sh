@@ -2,7 +2,7 @@
 
 #oarsub -t deploy -l slash_22=1+nodes=4,walltime=8 'katapult3 -e wheezy-x64-nfs -c --sleep'
 
-katapult3 -e wheezy-x64-nfs -c
+#katapult3 -e wheezy-x64-nfs -c
 
 
 SERVER=`cat $OAR_NODEFILE | sort -u | head -1`

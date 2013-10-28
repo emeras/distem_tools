@@ -66,6 +66,10 @@ Distem.client do |cl|
   # Start nodes in parallel
   cl.vnodes_start(vnodelist, async = false)
 
+  puts 'Waiting for VNodes to boot...'
+  sleep 120
+
+
   puts 'Setting VNodes Network info'
   # Fill arp table and etc hosts info
   cl.set_global_etchosts 
@@ -73,8 +77,10 @@ Distem.client do |cl|
 
   puts 'Finalizing VNodes Config'
   vnodelist.each do |node|
-  #  cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
-  #  cl.vnode_execute(node, "aptitude install -y liblz-dev lib32z-dev")
+    ## pp node
+    #cl.vnode_execute(node, 'hostname')
+    cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc ; source ~/.bashrc")
+    cl.vnode_execute(node, "apt-get install -y liblz-dev lib32z-dev")
   end
 
   puts 'Terminated...'
