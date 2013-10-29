@@ -98,7 +98,8 @@ folding_factor = ARGV[0].to_i
 if (!defined? folding_factor) || folding_factor<1
   folding_factor = 1
 end
-ipfile = "/tmp/distem_nodes_ip_#{`date +%s`}"
+now = `date +%s`.to_i
+ipfile = "/tmp/distem_nodes_ip_#{now}"
 iplist = []
 
 # Connect to the Distem server (on http://localhost:4567 by default)
