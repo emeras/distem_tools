@@ -23,27 +23,7 @@ scp DISTEM_NODES root@$SERVER:; rm DISTEM_NODES
 scp G5K_NET root@$SERVER:; rm G5K_NET
 
 
-ssh root@$SERVER "~jemeras/public/distem/distem_tools/setup_test.rb"
+ssh root@$SERVER "~jemeras/public/distem/distem_tools/2_distem-setup.rb"
 
 ssh root@$SERVER
-
-
-exit 0
-
-
-#### TO DO NEXT
-# On COORDINATOR
-apt-get install -y liblz-dev lib32z-dev
-
-cp -r ~jemeras/public/distem/distem_experiments/charm-6.5.1 .
-
-cd charm-6.5.1/ ; ./build charm++ net-linux-x86_64 -O3
-
-cd net-linux-x86_64/examples/charm++/load_balancing/stencil3d/ ; make clean ; make ; make projections
-
-
-# create nodelist
-
-for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp /root/charm-6.5.1/ root@$i:; done
-./charmrun ++p 32 ++nodelist ./vnodeslist ./stencil3d 100 1
 
