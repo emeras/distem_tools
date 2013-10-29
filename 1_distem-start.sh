@@ -25,5 +25,5 @@ scp G5K_NET root@$SERVER:; rm G5K_NET
 
 ssh root@$SERVER "~jemeras/public/distem/distem_tools/2_distem-setup.rb"
 
-ssh root@$SERVER
+ssh -X root@$SERVER
 
