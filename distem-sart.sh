@@ -27,3 +27,20 @@ ssh root@$SERVER "~jemeras/public/distem/distem_tools/setup_test.rb"
 
 ssh root@$SERVER
 
+
+exit 0
+
+
+#### TO DO NEXT
+# On COORDINATOR
+apt-get install -y liblz-dev lib32z-dev
+
+cp -r ~jemeras/public/distem/distem_experiments/charm-6.5.1 .
+
+cd charm-6.5.1/ ; ./build charm++ net-linux-x86_64 -O3
+
+cd net-linux-x86_64/examples/charm++/load_balancing/stencil3d/ ; make clean ; make ; make projections'
+
+
+
+
