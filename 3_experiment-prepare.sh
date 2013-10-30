@@ -21,12 +21,23 @@ cat /tmp/distem_nodes_ip_* >> ./vnodeslist_tmp
 for i in `cat ./vnodeslist_tmp`; do echo "host $i" >> ./vnodeslist; done
 rm ./vnodeslist_tmp
 
-
 for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp /root/charm-6.5.1/ root@$i:; done
-./charmrun ++p 32 ++nodelist ./vnodeslist ./stencil3d.prj 100 1
+
+NBNODES=`cat /root/DISTEM_NODES | wc -l`
+NBCORES=`nproc`
+TOTAL_CORES=$(($NBNODES * $NBCORES))
+
+# DO THIS ON FIRST VNODE
+ssh root@`cat /tmp/distem_nodes_ip_* | head -1` "cd /root/charm-6.5.1/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/ ; ./charmrun ++p $TOTAL_CORES ++nodelist ./vnodeslist ./stencil3d.prj 8192 8192 1 256 256 1"
 
 # grab results
 for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp root@$i:/root/charm-6.5.1/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/stencil.prj.* .; done
 
+# OPTIONS FOR STENCIL: LB
+# 
+# 
+# 
+# 
+# 
 
 
