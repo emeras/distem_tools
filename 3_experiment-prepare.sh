@@ -31,13 +31,29 @@ TOTAL_CORES=$(($NBNODES * $NBCORES))
 ssh root@`cat /tmp/distem_nodes_ip_* | head -1` "cd /root/charm-6.5.1/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/ ; ./charmrun ++p $TOTAL_CORES ++nodelist ./vnodeslist ./stencil3d.prj 8192 8192 1 256 256 1"
 
 # grab results
-for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp root@$i:/root/charm-6.5.1/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/stencil.prj.* .; done
+for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp root@$i:/root/charm-6.5.1/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/stencil3d.prj.* .; done
+
+# SAVE RESULTS
+DIR=expe_`date +%s`
+mkdir $DIR
+mv ./stencil3d.prj.* $DIR
+
+exit 0 # continue manually
+
+# MAKE A NODE SLOWER
+distem --get-vnode-info
+NODE='...'
+distem --config-vcpu vnode=$NODE,cpu_speed="1000 MHz"
+# THEN REPLAY SAME AS ABOVE
+
+# THEN TRY WITH NO LB
+
 
 # OPTIONS FOR STENCIL: LB
-# 
-# 
-# 
-# 
+# +LBOff 
+# +balancer <name of LB>
+# +LBPeriod <period in sec.>
+# +LBPredictor 
 # 
 
 
