@@ -10,7 +10,9 @@ for i in `cat /root/DISTEM_NODES`; do apt-get install -y liblz-dev lib32z-dev; d
 cp -r ~jemeras/public/distem/distem_experiments/charm-6.5.1 .
 
 # compile charm
-cd charm-6.5.1/ ; rm -rf net-linux-x86_64 ; ./build charm++ net-linux-x86_64 -O3
+#cd charm-6.5.1/ ; rm -rf net-linux-x86_64 ; ./build charm++ net-linux-x86_64 -O3
+cd charm-6.5.1/ ; rm -rf net-linux-x86_64 ; ./build charm++ net-linux-x86_64 smp -O3
+
 # and stencil
 cd net-linux-x86_64/examples/charm++/load_balancing/stencil3d/ ; make clean ; make ; make projections
 
@@ -51,7 +53,7 @@ distem --config-vcpu vnode=$NODE,cpu_speed="1000 MHz"
 
 # OPTIONS FOR STENCIL: LB
 # +LBOff 
-# +balancer <name of LB>
+# +balancer <name of LB>   GreedyLB RefineLB RefineSwapLB
 # +LBPeriod <period in sec.>
 # +LBPredictor 
 # 
