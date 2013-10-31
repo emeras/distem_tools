@@ -4,6 +4,12 @@ require 'distem'
 
 node_name = ARGV[0]
 
+
+# available distributions: 
+#   uniform - params: min, max 
+#   exponential - params: rate
+#   weibull - params: scale, shape
+
 Distem.client do |cl|
   generator_desc = {}
   generator_desc['date'] = {}
