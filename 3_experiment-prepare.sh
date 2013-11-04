@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CHARM_SOURCE='~jemeras/public/distem/distem_experiments/charm-6.5.1'
+CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
 
 #### TO DO NEXT
@@ -22,6 +22,7 @@ cd $CHARM_HOME ; rm -rf net-linux-x86_64* ; ./build charm++ net-linux-x86_64 -O3
 make projections -C $CHARM_HOME/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/
 
 # compile liveViz and wave2d
+make clean -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/
 make -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/
 make -C $CHARM_HOME/net-linux-x86_64/examples/charm++/wave2d/
 
@@ -33,6 +34,6 @@ echo 'group main' > $CHARM_HOME/vnodeslist
 for i in `cat /tmp/distem_nodes_ip_*`; do echo "host $i" >> $CHARM_HOME/vnodeslist; done
 
 # copy all on the nodes
-for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp $CHARM_HOME root@$i:; done
+for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done
 
 
