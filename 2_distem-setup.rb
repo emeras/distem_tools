@@ -45,11 +45,11 @@ opts.each do |option, value|
             puts usage_message
             exit 0
 #         elsif (option == "--fold")
-#                 folding_factor = value if value >1
+#                 folding_factor = value.to_i if value.to_i >1
         elsif (option == "--vm")
-                vm_per_host = value if value >1
+                vm_per_host = value.to_i if value.to_i >1
         elsif (option == "--vcore")
-                core_per_vm = value if value >1                
+                core_per_vm = value.to_i if value.to_i >1                
   end
 end
 
