@@ -1,11 +1,60 @@
 #!/usr/bin/ruby
-# Import the Distem module
 require 'distem'
 require 'thread'
 require 'socket'
 require 'pp'
+require 'getoptlong'
 ####
 
+
+###############################
+#### CLASSES and Functions ####
+###############################
+
+def usage_message
+    <<EOS
+Usage ./2_distem-setup.rb [OPTIONS]
+
+        OPTIONS:
+                --vm | -m <vm per host>: define how many vm per host are to be created (default is one)
+                --vcore | -c <core per vm>: define how many core per vm are to be setup (default is one)
+EOS
+end
+opts = GetoptLong.new(
+#[ "--fold","-f",              GetoptLong::REQUIRED_ARGUMENT ],
+[ "--help", "-h",             GetoptLong::NO_ARGUMENT ],
+[ "--vm","-m",              GetoptLong::REQUIRED_ARGUMENT ],
+[ "--vcore","-c",              GetoptLong::REQUIRED_ARGUMENT ],
+)
+############################
+# Constants, need to be passed as parameter some day.
+FSIMG="file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
+NODES="/root/DISTEM_NODES"
+NET='/root/G5K_NET'
+SSH_KEY='id_dsa'
+
+# NB: Always take the last recent file for ip list
+now = `date +%s`.to_i
+ipfile = "/tmp/distem_nodes_ip_#{now}"
+
+#folding_factor = 1
+vm_per_host = 1
+core_per_vm = 1
+opts.each do |option, value| 
+        if (option == "--help")
+            puts usage_message
+            exit 0
+#         elsif (option == "--fold")
+#                 folding_factor = value if value >1
+        elsif (option == "--vm")
+                vm_per_host = value if value >1
+        elsif (option == "--vcore")
+                core_per_vm = value if value >1                
+  end
+end
+
+
+############################
 class SlidingWindow
   def initialize(size)
     @queue = []
@@ -70,37 +119,25 @@ def wait_ssh(host, timeout = 120)
     return false
 end
 
-
-####
-# The path to the compressed filesystem image
-# We can point to local file since our homedir is available from NFS
-FSIMG="file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
-# Getting the physical nodes list which is set in the
-# environment variable 'DISTEM_NODES' by distem-bootstrap
-pnodes=IO.readlines('/root/DISTEM_NODES').join.split("\n")
+#######################################################################
+#### Main ####
+#######################################################################
+pnodes=IO.readlines(NODES).join.split("\n")
 raise 'Distem requires at least one physical machines' unless pnodes.size >= 1
-# This ruby hash table describes our virtual network
-g5k_net=IO.readlines('/root/G5K_NET').join
+g5k_net=IO.readlines(NET).join
 vnet = {
   'name' => 'vnet0',
-  'address' => g5k_net
+  'address' => g5k_net, 
+  'interface' => 'if0'  
 }
-# Read SSH keys
-private_key = IO.readlines('/root/.ssh/id_dsa').join
-public_key = IO.readlines('/root/.ssh/id_dsa.pub').join
+private_key = IO.readlines("/root/.ssh/#{SSH_KEY}").join
+public_key = IO.readlines("/root/.ssh/#{SSH_KEY}.pub").join
 sshkeys = {
   'private' => private_key,
   'public' => public_key
 }
-
-
-folding_factor = ARGV[0].to_i
-if (!defined? folding_factor) || folding_factor<1
-  folding_factor = 1
-end
-now = `date +%s`.to_i
-ipfile = "/tmp/distem_nodes_ip_#{now}"
 iplist = []
+
 
 # Connect to the Distem server (on http://localhost:4567 by default)
 Distem.client do |cl|
@@ -120,22 +157,26 @@ Distem.client do |cl|
   vnodelist = []
   pnodes_info.each do |key, info|
     pnode = key.dup
-    #pnode.slice! ".grid5000.fr"
+    #pnode.slice! ".grid5000.fr"   # this is for multisite use.
     pnode.slice!(/\..*\.grid5000\.fr/)
     ncores = info['cpu']['cores'].size
     memory = info['memory']['capacity']
     swap = info['memory']['swap']
-
-    for i in 1..folding_factor
+    
+    # check that user required toplogy is ok with what we have
+    raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' if ncores < vm_per_host * core_per_vm 
+    
+    
+    for i in 1..vm_per_host
       node = "#{pnode}_#{i}"
       vnodelist << node
       cl.vnode_create(node, { 'host' => pnode }, sshkeys)
       cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true})
-      iface = cl.viface_create(node, 'if0', { 'vnetwork' => vnet['name'] })
+      iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
       iplist << iface['address'].split('/')[0]
 
-      cl.vcpu_create(node, corenb = ncores, frequency = 1.0) if folding_factor ==1
-      #cl.vmem_create(memory, swap) if folding_factor == 1
+      cl.vcpu_create(node, corenb = core_per_vm, frequency = 1.0) 
+      #cl.vmem_create(memory, swap)    # Memory needs a special kernel option
     end
 
   end
@@ -179,3 +220,4 @@ Distem.client do |cl|
 
   puts 'Terminated...'
 end
+
