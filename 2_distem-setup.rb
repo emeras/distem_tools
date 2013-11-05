@@ -32,10 +32,7 @@ FSIMG="file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
 NODES="/root/DISTEM_NODES"
 NET='/root/G5K_NET'
 SSH_KEY='id_dsa'
-
-# NB: Always take the last recent file for ip list
-now = `date +%s`.to_i
-ipfile = "/tmp/distem_nodes_ip_#{now}"
+IPFILE = "/tmp/distem_vnodes_ip"
 
 #folding_factor = 1
 vm_per_host = 1
@@ -208,7 +205,7 @@ Distem.client do |cl|
   puts "Setting global ARP tables"
   cl.set_global_arptable
 
-  File.open(ipfile,'w') do |f|
+  File.open(IPFILE,'w') do |f|
     iplist.each{ |ip| f.puts(ip) }
   end
 

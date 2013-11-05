@@ -31,9 +31,9 @@ make -C $CHARM_HOME/net-linux-x86_64/examples/charm++/Molecular2D/
 
 # create nodelist
 echo 'group main' > $CHARM_HOME/vnodeslist
-for i in `cat /tmp/distem_nodes_ip_*`; do echo "host $i" >> $CHARM_HOME/vnodeslist; done
+for i in `cat /tmp/distem_vnodes_ip`; do echo "host $i" >> $CHARM_HOME/vnodeslist; done
 
 # copy all on the nodes
-for i in `cat /tmp/distem_nodes_ip_*` ; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done
+for i in `cat /tmp/distem_vnodes_ip` ; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done
 
 
