@@ -22,10 +22,9 @@ NoHostAuthenticationForLocalhost yes\" >> /root/.ssh/config" ]
 scp DISTEM_NODES root@$SERVER:; rm DISTEM_NODES 
 scp G5K_NET root@$SERVER:; rm G5K_NET
 
-
-ssh root@$SERVER "~jemeras/public/distem/distem_tools/2_distem-setup.rb"
-ssh root@$SERVER "~jemeras/public/distem/distem_tools/3_experiment-prepare.sh"
-
-
-ssh -X root@$SERVER
+exit 0
+# ssh root@$SERVER "~jemeras/public/distem/distem_tools/2_distem-setup.rb"
+# ssh root@$SERVER "~jemeras/public/distem/distem_tools/3_experiment-prepare.sh"
+# 
+# ssh -X root@$SERVER
 

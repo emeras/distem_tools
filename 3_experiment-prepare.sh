@@ -7,7 +7,7 @@ CHARM_HOME='/root/charm-6.5.1'
 # On COORDINATOR
 
 # install libz
-for i in `cat /root/DISTEM_NODES`; do apt-get install -y liblz-dev lib32z-dev; done
+for i in `cat /root/DISTEM_NODES`; do apt-get install -y liblz-dev lib32z-dev cpuburn; done
 
 # copy charm in local dir
 cp -r $CHARM_SOURCE $CHARM_HOME
