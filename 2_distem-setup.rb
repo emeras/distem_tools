@@ -33,8 +33,7 @@ NODES="/root/DISTEM_NODES"
 NET='/root/G5K_NET'
 SSH_KEY='id_dsa'
 IPFILE = "/tmp/distem_vnodes_ip"
-#ALGO = 'gov'
-## ALGO = 'hogs'  # this is the default value so no need to specify
+#CPU_ALGO = 'gov'   # 'gov' or 'hogs', default is 'hogs'
 
 #folding_factor = 1
 vm_per_host = 1
@@ -152,7 +151,7 @@ Distem.client do |cl|
   pnodes_info = {}
   pnodes.each do |node|
     pnodes_info[node] = cl.pnode_info(target = node)
-    cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>ALGO} })
+    cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>CPU_ALGO} }) if defined? CPU_ALGO
   end
   vnodelist = []
   pnodes_info.each do |key, info|
