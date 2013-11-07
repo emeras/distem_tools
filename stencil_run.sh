@@ -66,7 +66,7 @@ exit 0 # continue manually
 # MAKE A NODE SLOWER
 distem --get-vnode-info
 NODE='...'
-distem --config-vcpu vnode=$NODE,cpu_speed="1000 MHz"
+distem --config-vcpu vnode=$NODE,cpu_speed=0.5  #"1000 MHz"
 # THEN REPLAY SAME AS ABOVE
 
 # THEN TRY WITH NO LB
