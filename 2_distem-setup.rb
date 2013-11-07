@@ -33,6 +33,8 @@ NODES="/root/DISTEM_NODES"
 NET='/root/G5K_NET'
 SSH_KEY='id_dsa'
 IPFILE = "/tmp/distem_vnodes_ip"
+#ALGO = 'gov'
+## ALGO = 'hogs'  # this is the default value so no need to specify
 
 #folding_factor = 1
 vm_per_host = 1
@@ -146,10 +148,11 @@ Distem.client do |cl|
   end
   # Creating virtual nodes
   puts 'Creating VNodes'
-  # Retrieve PNodes topology and info
+  # Retrieve PNodes topology and info, update Pnodes setup (algos...)
   pnodes_info = {}
   pnodes.each do |node|
     pnodes_info[node] = cl.pnode_info(target = node)
+    cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>ALGO} })
   end
   vnodelist = []
   pnodes_info.each do |key, info|
