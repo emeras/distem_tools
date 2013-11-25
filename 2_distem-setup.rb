@@ -28,12 +28,12 @@ opts = GetoptLong.new(
 )
 ############################
 ### ENV VAR needed.
-# FSIMG
-# NODES
-# NET
-# SSH_KEY
-# IPFILE
-# CPU_ALGO
+FSIMG=ENV["FSIMG"]
+NODES=ENV["NODES"]
+NET=ENV["NET"]
+SSH_KEY=ENV["SSH_KEY"]
+IPFILE=ENV["IPFILE"]
+CPU_ALGO=ENV["CPU_ALGO"]
 ############################
 
 #folding_factor = 1
