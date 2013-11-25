@@ -11,7 +11,7 @@ process :grid5000_deployment do
     bootstrap_taktuk(nodes)
     frontend = g5k_frontend_from_job job
     result = execute frontend, "g5k-subnets -sp -j #{uid_of job}"
-    distribute result, nodes, "/tmp/SUBNET"
+    distribute_one result, nodes, "/tmp/SUBNET"
     value([ nodes, "/var/lib/oar/#{uid_of job}", frontend ])
 end
 
@@ -65,10 +65,10 @@ process :my_exp do
         run :initial_config_of_master, master
         run :initial_config_of_slaves, slaves
     end
-    run :distem, frontend, master, machines
-    run :compilation, master, slaves, :opts => "net-linux-x86_64 -03 smp"
-    ips = run :get_all_ips_from_distem
-    run :experiment, master, ips
+    # run :distem, frontend, master, machines
+    # run :compilation, master, slaves, :opts => "net-linux-x86_64 -03 smp"
+    # ips = run :get_all_ips_from_distem
+    # run :experiment, master, ips
 end
 
 main :my_exp
