@@ -1,17 +1,26 @@
-### Distem Experiment Param File
-
+####################################
+### Distem Experiment Param File ###
+####################################
 ### Job Params
-#site:   nancy
 job:    "nancy/*"
 
 ### Deploy
-env:    wheezy-x64-nfs
-
+env:    "wheezy-x64-nfs"
 
 ### Distem
-vm:     4
-vcore:  8
-
+vm:             4
+vcore:          8
+fsimg:          "file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
+nodes_file:     "/root/DISTEM_NODES"
+net_file:       "/root/G5K_NET"
+ssh_key:        'id_dsa'
+ipfile:         "/tmp/distem_vnodes_ip"
+cpu_algo:       "hogs"
+# cpu_algo:       "gov"
+distem_setup_file:      "/home/jemeras/public/distem/distem_tools/2_distem_setup.rb"
 
 ### Stencil
-arch:   net-linux-x86_64
+CHARM_SOURCE: "/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
+CHARM_HOME: '/root/charm-6.5.1'
+arch:   "net-linux-x86_64"
+compile_options: "-O3"

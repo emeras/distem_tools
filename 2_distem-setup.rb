@@ -27,13 +27,14 @@ opts = GetoptLong.new(
 [ "--vcore","-c",              GetoptLong::REQUIRED_ARGUMENT ],
 )
 ############################
-# Constants, need to be passed as parameter some day.
-FSIMG="file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
-NODES="/root/DISTEM_NODES"
-NET='/root/G5K_NET'
-SSH_KEY='id_dsa'
-IPFILE = "/tmp/distem_vnodes_ip"
-#CPU_ALGO = 'gov'   # 'gov' or 'hogs', default is 'hogs'
+### ENV VAR needed.
+# FSIMG
+# NODES
+# NET
+# SSH_KEY
+# IPFILE
+# CPU_ALGO
+############################
 
 #folding_factor = 1
 vm_per_host = 1
