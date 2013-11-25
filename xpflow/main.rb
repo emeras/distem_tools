@@ -5,17 +5,14 @@ CHARM_SOURCE = "sdfdsfdsf"
 CHARM_HOME = "sdfdsfdf"
 
 process :grid5000_deployment do
-    job = g5k_auto_raw :site => var(:site)
-    nodes = g5k_kadeploy(job, "wheezy-x64-nfs")
+    #job = g5k_auto_raw :site => var(:site)
+    job = var(:job, :g5k)
+    nodes = g5k_kadeploy(job, :env)
     bootstrap_taktuk(nodes)
     frontend = g5k_frontend_from_job job
     result = execute frontend, "g5k-subnets -sp -j #{uid_of job}"
-    distribute result, nodes, "/tmp/SUBNET"  # TODO
-    value([ nodes, "/var/lib/oar/#{uid_of job}", frontend ]) # TODO
-end
-
-process :grid5000_deployment do
-    value [ "node1", "node2", "node3" ]
+    distribute result, nodes, "/tmp/SUBNET"
+    value([ nodes, "/var/lib/oar/#{uid_of job}", frontend ])
 end
 
 process :initial_config_of_master do |master|

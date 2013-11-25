@@ -1,0 +1,7 @@
+
+r=file host <file>  => get file content
+distribute r hosts =>  uses taktuk tu PUT file on nodes
+
+
+
+

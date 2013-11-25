@@ -1,18 +1,19 @@
 #!/bin/bash
 
+set -eux
+
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
 
 #### TO DO NEXT
 # On COORDINATOR
-
-# install libz
-for i in `cat /root/DISTEM_NODES`; do apt-get install -y liblz-dev lib32z-dev; done
-#for i in `cat /root/DISTEM_NODES`; do apt-get install -y gfortran fortran77-compiler gfortran-multilib; done
-
 # copy charm in local dir
+
+# On Master
 cp -r $CHARM_SOURCE $CHARM_HOME
 
+
+apt-get install -y liblz-dev lib32z-dev
 # compile charm
 #cd $CHARM_HOME ; rm -rf net-linux-x86_64* ; ./build charm++ net-linux-x86_64 smp -O3
 #cd $CHARM_HOME ; ln -s net-linux-x86_64-smp net-linux-x86_64

@@ -18,14 +18,14 @@ Distem.client do |cl|
   generator_desc['date']['distribution'] = 'uniform'
 
   # uniformally between min and max secs generate a value
-  generator_desc['date']['min'] = 0
-  generator_desc['date']['max'] = 1
+  generator_desc['date']['min'] = 60
+  generator_desc['date']['max'] = 120
   generator_desc['value'] = {}
   generator_desc['value']['distribution'] = 'uniform'
 #   generator_desc['value']['min'] = 1
 #   generator_desc['value']['max'] = 2500
-  generator_desc['value']['min'] = 1500
-  generator_desc['value']['max'] = 2000
+  generator_desc['value']['min'] = 10
+  generator_desc['value']['max'] = 2499
 #  generator_desc['date'] = { 'distribution' => 'weibull', 'scale'=>10, 'shape'=>3}
   cl.event_random_add({'type' => 'vcpu', 'vnodename' => node_name}, 'power', generator_desc)
   cl.event_manager_start
