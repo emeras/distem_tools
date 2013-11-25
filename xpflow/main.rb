@@ -65,7 +65,7 @@ process :my_exp do
     end
     run :distem, frontend, master, machines
     run :compilation, master, slaves
-    ips = file master var(:ipfile)
+    ips = file master, var(:ipfile)
     create_charmfile(master, ips)
     run :experiment, master, ips
 end
