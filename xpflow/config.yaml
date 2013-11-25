@@ -2,10 +2,10 @@
 
 ### Job Params
 #site:   nancy
-job:    *
+job:    "nancy/*"
 
 ### Deploy
-env: wheezy-x64-nfs
+env:    wheezy-x64-nfs
 
 
 ### Distem
