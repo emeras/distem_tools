@@ -7,7 +7,7 @@ process :grid5000_deployment do
     nodes = g5k_kadeploy(job, env)
     bootstrap_taktuk(nodes)
     frontend = g5k_frontend_from_job job
-    result = execute frontend, "g5k-subnets -sp -j #{uid_of job}"
+    result = execute_one frontend, "g5k-subnets -sp -j #{uid_of job}"
     distribute_one result, nodes, var(:net_file)
     value([ nodes, "/var/lib/oar/#{uid_of job}", frontend ])
 end
@@ -35,9 +35,9 @@ process :compilation do |master, slaves|
     execute master, "apt-get install -y lib1z-dev lib32z-dev"
     execute master, "cd #{var(:CHARM_HOME)}; rm -rf #{var(:arch)}*"
     execute master, "cd #{var(:CHARM_HOME)}; ./build charm++ #{var(:arch)} #{var(:compile_options)}"
-    execute master, "make projections -C #{var(:CHARM_HOME)}/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/"
+    execute master, "make projections -C #{var(:CHARM_HOME)}/#{var(:arch)}/examples/charm++/load_balancing/stencil3d/"
     execute_many slaves, "rm -rf #{var(:CHARM_HOME)}"
-    forall slaves, :pool => 12 do |it|
+    forall slaves, :pool => 10 do |it|
         execute master, "scp -r #{var(:CHARM_HOME)} #{userhost_of it}:#{var(:CHARM_HOME)}"
     end
 end
