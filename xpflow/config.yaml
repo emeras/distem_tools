@@ -6,3 +6,12 @@ job:    *
 
 ### Deploy
 env: wheezy-x64-nfs
+
+
+### Distem
+vm:     4
+vcore:  8
+
+
+### Stencil
+arch:   net-linux-x86_64

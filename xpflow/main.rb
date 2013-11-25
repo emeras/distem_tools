@@ -34,7 +34,7 @@ process :compilation do |master, slaves, options|
     opts = opts_of(options, "net-linux-x86_64 -O3")
     execute master, "cp -r #{CHARM_SOURCE} #{CHARM_HOME}"
     execute master, "apt-get install -y lib1z-dev lib32z-dev"
-    execute master, "cd #{CHARM_HOME}; rm -rf #{arch}*"
+    execute master, "cd #{CHARM_HOME}; rm -rf #{:arch}*"
     execute master, "cd #{CHARM_HOME}; ./build charm++ #{opts}"
     execute master, "make projections -C #{CHARM_HOME}/net-linux-x86_64/examples/charm++/load_balancing/stencil3d/"
     execute_many slaves, "rm -rf #{CHARM_HOME}"
