@@ -50,7 +50,7 @@ activity :create_charmfile do |master, ips|
 end
 
 process :experiment do |master, ips|
-    create_charmfile(master, ips)
+    
     # At this point, the file $CHARM_HOME/vnodeslist is created and we are ready to run stencil3d
 end
 
@@ -65,7 +65,8 @@ process :my_exp do
     end
     run :distem, frontend, master, machines
     run :compilation, master, slaves
-    ips = IO.readlines(var(:ipfile))
+    ips = file master var(:ipfile)
+    create_charmfile(master, ips)
     run :experiment, master, ips
 end
 
