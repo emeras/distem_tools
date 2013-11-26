@@ -29,14 +29,12 @@ COMPILE_OPTIONS="-O3"
 
 ###############################################################################
 
-#oarsub -t deploy -l slash_22=1+cluster=1,nodes=4,walltime=8 'sleep 999999'
 if $DEPLOY; then
     katapult3 -e $ENV_DEPLOY -c
 fi
 
 SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
 ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
-
 
 DISTEM_NODES_TMP=`mktemp`
 G5K_NET_TMP=`mktemp`
@@ -72,9 +70,6 @@ ssh root@$SERVER "make -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/"
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 # compile Mol2D
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
-
-# copy CHARM_HOME from first node to all the other nodes
-#for i in `cat $OAR_NODE_FILE | sort -u -V | tail -n +2`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # setup distem
 if $SHARED; then
