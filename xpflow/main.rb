@@ -28,8 +28,8 @@ end
 # end
 
 process :distem do |frontend, master, machines|
-    #execute frontend, "distem-bootstrap -f #{machines}"
-    execute frontend, "distem-bootstrap -D --btrfs-format /dev/sda5 -f #{machines}"
+    execute frontend, "distem-bootstrap -D -f #{machines}"
+    #execute frontend, "distem-bootstrap -D -f #{machines} --btrfs-format /dev/sda5"
     r = file frontend, var(:distem_setup_file)
     copy r, master, var(:distem_setup_dest)
     vm = var(:vm, :int)
@@ -38,7 +38,7 @@ process :distem do |frontend, master, machines|
 end
 
 activity :create_charmfile do |master, ips|
-    master.file("#{var(:CHARM_HOME)}/vnodeslist") do |f|
+    master.file("#{var(:CHARM_HOME)}/#{var(:CHARM_NODELIST_FILE)}") do |f|
         f.puts "group main"
         ips.each { |ip| f.puts "host #{ip}" }
     end
@@ -63,7 +63,7 @@ end
 
 process :experiment do |master|
     
-    # At this point, the file $CHARM_HOME/vnodeslist is created and we are ready to run stencil3d
+    # At this point, the file $CHARM_HOME/nodelist is created and we are ready to run stencil3d
 end
 
 process :my_exp do

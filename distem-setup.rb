@@ -28,7 +28,7 @@ opts = GetoptLong.new(
 [ "--vcore","-c",              GetoptLong::REQUIRED_ARGUMENT ],
 )
 ############################
-### ENV VAR needed. # TODO: set as parameter or other cleaner method
+### ENV VAR needed. # TODO: set as option or other cleaner method
 FSIMG=ENV["FSIMG"]
 NODES=ENV["NODES"]
 NET=ENV["NET"]
