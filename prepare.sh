@@ -44,6 +44,7 @@ taktuk -l root -f $DISTEM_NODES_TMP broadcast exec [ "echo \"Host *
 StrictHostKeyChecking no
 NoHostAuthenticationForLocalhost yes\" >> /root/.ssh/config" ]
 
+### setup distem
 if $SHARED; then
     DISTEM_BOOTSTRAP_OPT='--btrfs-format /dev/sda5'
 else
@@ -54,7 +55,14 @@ distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT
 scp $DISTEM_NODES_TMP root@$SERVER:$NODES
 scp $G5K_NET_TMP root@$SERVER:$NET
 
-# Now on Master
+if $SHARED; then
+    DISTEM_SETUP_OPT='-s'
+else
+    DISTEM_SETUP_OPT=''
+fi
+ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE $DISTEM_SETUP_OPT"
+
+### build charm
 ssh root@$SERVER "cp -r $CHARM_SOURCE $CHARM_HOME"
 # Install compression packages needed by projections
 ssh root@$SERVER "apt-get install -y --force-yes liblz-dev lib32z-dev"
@@ -71,14 +79,6 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 # compile Mol2D
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 
-# setup distem
-if $SHARED; then
-    DISTEM_SETUP_OPT='-s'
-else
-    DISTEM_SETUP_OPT=''
-fi
-ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE $DISTEM_SETUP_OPT"
-
 # create nodelist for charm and copy CHARM_HOME on vnodes
 IPFILE_TMP=`mktemp` ; scp root@$SERVER:$IPFILE $IPFILE_TMP
 CHARM_NODELIST_TMP=`mktemp`
@@ -88,5 +88,5 @@ scp $CHARM_NODELIST_TMP root@$SERVER:$CHARM_NODELIST
 for i in `cat $IPFILE_TMP`; do ssh root@$i "rm -rf $CHARM_HOME"; done
 for i in `cat $IPFILE_TMP`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
-# Connect the head node
+### Connect the head node
 ssh -X root@$SERVER

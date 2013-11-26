@@ -37,23 +37,31 @@ process :distem do |frontend, master, machines|
     execute_one master, "ruby #{var(:distem_setup_dest)} --vm #{vm} --vcore #{vcore}", { :FSIMG => var(:fsimg), :NODES => var(:nodes_file), :NET => var(:net_file), :SSH_KEY => var(:ssh_key), :IPFILE => var(:ipfile), :CPU_ALGO => var(:cpu_algo)}
 end
 
-activity :create_charmfile do |master, ips|
-    master.file("#{var(:CHARM_HOME)}/#{var(:CHARM_NODELIST_FILE)}") do |f|
-        f.puts "group main"
-        ips.each { |ip| f.puts "host #{ip}" }
-    end
-end
+# activity :create_charmfile do |master, ips|
+#     master.file("#{var(:CHARM_HOME)}/#{var(:CHARM_NODELIST_FILE)}") do |f|
+#         f.puts "group main"
+#         ips.each { |ip| f.puts "host #{ip}" }
+#     end
+#     
+#     
+#     out = forall nodes do |node|
+#         r = execute node, "date"
+#         strip_of stdout_of first_of r
+#     end
+#     
+# end
 
 process :configure_charm do |master|
     ips = file master, var(:ipfile)
-    create_charmfile(master, ips)
+#     create_charmfile(master, ips)
 end
 
 process :compilation do |master, slaves|
     execute master, "cp -r #{var(:CHARM_SOURCE)} #{var(:CHARM_HOME)}"
     execute master, "apt-get install -y --force-yes liblz-dev lib32z-dev"
     execute master, "rm -rf #{var(:CHARM_HOME)}/#{var(:arch)}*"
-    execute master, "cd #{var(:CHARM_HOME)} && ./build charm++ #{var(:arch)} #{var(:compile_options)}"
+    #execute master, "cd #{var(:CHARM_HOME)} && ./build charm++ #{var(:arch)} #{var(:compile_options)}"
+    r = execute_one master, "./build charm++ #{var(:arch)} #{var(:compile_options)}", { :wd => "#{var(:CHARM_HOME)}" }
     execute master, "make projections -C #{var(:CHARM_HOME)}/#{var(:arch)}/examples/charm++/load_balancing/stencil3d/"
     execute_many slaves, "rm -rf #{var(:CHARM_HOME)}"
     forall slaves, :pool => 10 do |it|
@@ -74,9 +82,9 @@ process :my_exp do
     #     run :initial_config_of_master, master
     #     run :initial_config_of_slaves, slaves
     # end
-    #run :compilation, master, slaves
     run :distem, frontend, master, machines
-    run :configure_charm, master
+    run :compilation, master, slaves
+    #run :configure_charm, master
     run :experiment, master
 end
 

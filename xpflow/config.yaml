@@ -8,8 +8,8 @@ job:    "nancy/*"
 env:    "wheezy-x64-nfs"
 
 ### Distem
-vm:             4
-vcore:          1
+vm:             1
+vcore:          4
 fsimg:          "file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
 nodes_file:     "/root/DISTEM_NODES"
 net_file:       "/root/G5K_NET"
