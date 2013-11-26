@@ -216,9 +216,7 @@ Distem.client do |cl|
   puts 'Finalizing VNodes Config'
   vnodelist.each do |node|
     cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
-    #cl.vnode_execute(node, "apt-get install -y cpuburn")
   end
 
   puts 'Terminated...'
 end
-
