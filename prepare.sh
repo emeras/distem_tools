@@ -48,7 +48,10 @@ scp $G5K_NET_TMP root@$SERVER:$NET
 
 # Now on Master
 ssh root@$SERVER "cp -r $CHARM_SOURCE $CHARM_HOME"
+# Install compression packages needed by projections
 ssh root@$SERVER "apt-get install -y --force-yes liblz-dev lib32z-dev"
+# Install other usefull packages for NBP
+ssh root@$SERVER "apt-get install -y --force-yes fortran77-compiler gfortran gfortran-multilib"
 # compile charm
 ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $ARCH* ; ./build charm++ $ARCH $COMPILE_OPTIONS"
 # compile stencil3D
@@ -67,9 +70,12 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE"
 
 # create nodelist for charm and copy CHARM_HOME on vnodes
-ssh root@$SERVER "echo 'group main' > $CHARM_NODELIST"
-ssh root@$SERVER "IPFILE=$IPFILE ; for i in `cat $IPFILE`; do echo "host $i" >> $CHARM_NODELIST; done"
-ssh root@$SERVER "IPFILE=$IPFILE ; for i in `cat $IPFILE`; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
+IPFILE_TMP=`mktemp` ; scp root@$SERVER:$IPFILE $IPFILE_TMP
+CHARM_NODELIST_TMP=`mktemp`
+echo 'group main' > $CHARM_NODELIST_TMP
+for i in `cat $IPFILE_TMP`; do echo "host $i" >> $CHARM_NODELIST_TMP; done
+scp $CHARM_NODELIST_TMP root@$SERVER:$CHARM_NODELIST
+for i in `cat $IPFILE_TMP`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # Connect the head node
 ssh -X root@$SERVER
