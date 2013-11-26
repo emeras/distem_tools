@@ -56,7 +56,7 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 
 # copy all on the nodes
-ssh root@$SERVER "for i in `cat /root/DISTEM_NODES` ; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
+ssh root@$SERVER "NODES=$NODES for i in `cat $NODES` ; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
 
 # setup distem
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO ~jemeras/public/distem/distem_tools/distem-setup.rb -v $VM -c $VCORE"
