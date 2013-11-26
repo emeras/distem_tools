@@ -58,14 +58,15 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 
 # copy CHARM_HOME from first node to all the other nodes
-for i in `cat $OAR_NODE_FILE | sort -u -V | tail -n +2`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
+#for i in `cat $OAR_NODE_FILE | sort -u -V | tail -n +2`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # setup distem
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO ~jemeras/public/distem/distem_tools/distem-setup.rb -m $VM -c $VCORE"
 
-# create nodelist for charm
+# create nodelist for charm and copy CHARM_HOME on vnodes
 ssh root@$SERVER "echo 'group main' > $CHARM_HOME/vnodeslist"
 ssh root@$SERVER "for i in `cat $IPFILE`; do echo "host $i" >> $CHARM_HOME/vnodeslist; done"
+ssh root@$SERVER "for i in `cat $IPFILE`; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
 
 # Connect the head node
 ssh -X root@$SERVER
