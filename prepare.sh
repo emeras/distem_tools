@@ -17,8 +17,8 @@ SSH_KEY='id_rsa'
 IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
-#SHARED=true
-SHARED=false
+SHARED=true
+#SHARED=false
 
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
