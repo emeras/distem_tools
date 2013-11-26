@@ -23,5 +23,7 @@ distem_setup_dest: 	"/root/distem-setup.rb"
 ### Stencil
 CHARM_SOURCE: "/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME: '/root/charm-6.5.1'
-arch:   'net-linux-x86_64'
+CHARM_NODELIST_file: "nodelist"
+arch: 'net-linux-x86_64'
 compile_options: "-O3"
+

@@ -18,10 +18,11 @@ Usage distem-setup [OPTIONS]
         OPTIONS:
                 --vm | -m <vm per host>: define how many vm per host are to be created (default is one)
                 --vcore | -c <core per vm>: define how many core per vm are to be setup (default is one)
+                --shared | -s: use shared vm images with btrfs and cow -- needs corresponding distem-bootstrap option (default is false)
 EOS
 end
 opts = GetoptLong.new(
-#[ "--fold","-f",              GetoptLong::REQUIRED_ARGUMENT ],
+[ "--shared","-s",              GetoptLong::NO_ARGUMENT ],
 [ "--help", "-h",             GetoptLong::NO_ARGUMENT ],
 [ "--vm","-m",              GetoptLong::REQUIRED_ARGUMENT ],
 [ "--vcore","-c",              GetoptLong::REQUIRED_ARGUMENT ],
@@ -36,15 +37,15 @@ IPFILE=ENV["IPFILE"]
 CPU_ALGO=ENV["CPU_ALGO"]
 ############################
 
-#folding_factor = 1
+shared = false
 vm_per_host = 1
 core_per_vm = 1
 opts.each do |option, value| 
         if (option == "--help")
             puts usage_message
             exit 0
-#         elsif (option == "--fold")
-#                 folding_factor = value.to_i if value.to_i >1
+        elsif (option == "--shared")
+                shared = true
         elsif (option == "--vm")
                 vm_per_host = value.to_i if value.to_i >1
         elsif (option == "--vcore")
@@ -160,8 +161,8 @@ Distem.client do |cl|
     #pnode.slice! ".grid5000.fr"   # this is for multisite use.
     pnode.slice!(/\..*\.grid5000\.fr/)
     ncores = info['cpu']['cores'].size
-    memory = info['memory']['capacity']
-    swap = info['memory']['swap']
+    #memory = info['memory']['capacity']
+    #swap = info['memory']['swap']
     
     # check that user required toplogy is ok with what we have
     raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' if ncores < vm_per_host * core_per_vm 
@@ -170,13 +171,15 @@ Distem.client do |cl|
       node = "#{pnode}_#{i}"
       vnodelist << node
       cl.vnode_create(node, { 'host' => pnode }, sshkeys)
-      cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true}) # TODO: set an option to determine if cow will be used
-      #cl.vfilesystem_create(node, { 'image' => FSIMG })
+      if (shared == true)
+	cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true})
+      else
+	cl.vfilesystem_create(node, { 'image' => FSIMG })
+      end
       iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
       iplist << iface['address'].split('/')[0]
 
-      cl.vcpu_create(node, corenb = core_per_vm, frequency = 1.0) 
-      #cl.vmem_create(memory, swap)    # TODO: Memory needs a special kernel option, set this as an option
+      cl.vcpu_create(node, corenb = core_per_vm, frequency = 1.0)
     end
 
   end

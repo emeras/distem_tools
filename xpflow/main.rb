@@ -68,7 +68,6 @@ end
 
 process :my_exp do
     nodes, machines, frontend = run :grid5000_deployment
-    #checkpoint :nodes_deployed
     master, slaves = shift nodes
     log "Master: #{master}, slaves: #{slaves}"
     # parallel do

@@ -16,7 +16,8 @@ SSH_KEY='id_rsa'
 IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
-
+#SHARED=true
+SHARED=false
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
@@ -41,7 +42,12 @@ taktuk -l root -f $DISTEM_NODES_TMP broadcast exec [ "echo \"Host *
 StrictHostKeyChecking no
 NoHostAuthenticationForLocalhost yes\" >> /root/.ssh/config" ]
 
-distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP --btrfs-format /dev/sda5 #opt: use -g to use git source instead of release
+if $SHARED; then
+    DISTEM_BOOTSTRAP_OPT = '--btrfs-format /dev/sda5'
+else
+    DISTEM_BOOTSTRAP_OPT = ''
+fi
+distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT
 
 scp $DISTEM_NODES_TMP root@$SERVER:$NODES
 scp $G5K_NET_TMP root@$SERVER:$NET
@@ -67,7 +73,12 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 #for i in `cat $OAR_NODE_FILE | sort -u -V | tail -n +2`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # setup distem
-ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE"
+if $SHARED; then
+    DISTEM_SETUP_OPT = '-s'
+else
+    DISTEM_SETUP_OPT = ''
+fi
+ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE $DISTEM_SETUP_OPT"
 
 # create nodelist for charm and copy CHARM_HOME on vnodes
 IPFILE_TMP=`mktemp` ; scp root@$SERVER:$IPFILE $IPFILE_TMP
