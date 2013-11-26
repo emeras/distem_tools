@@ -28,8 +28,8 @@ end
 # end
 
 process :distem do |frontend, master, machines|
-    execute frontend, "distem-bootstrap -f #{machines}"
-    #execute frontend, "distem-bootstrap -g -D --btrfs-format /dev/sda5 -f #{machines}"
+    #execute frontend, "distem-bootstrap -f #{machines}"
+    execute frontend, "distem-bootstrap -g -D --btrfs-format /dev/sda5 -f #{machines}"
     r = file frontend, var(:distem_setup_file)
     copy r, master, var(:distem_setup_dest)
     vm = var(:vm, :int)
