@@ -29,7 +29,7 @@ katapult3 -e $ENV_DEPLOY -c
 SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
 ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
 
-distem-bootstrap -g -D --btrfs-format /dev/sda5 -c $SERVER
+distem-bootstrap -D --btrfs-format /dev/sda5 -c $SERVER # opt: use -g to use git source instead of release
 #distem-bootstrap -D -c $SERVER
 
 cat $OAR_NODE_FILE | sort -u -V > DISTEM_NODES
