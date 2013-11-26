@@ -47,9 +47,9 @@ StrictHostKeyChecking no
 NoHostAuthenticationForLocalhost yes\" >> /root/.ssh/config" ]
 
 if $SHARED; then
-    DISTEM_BOOTSTRAP_OPT = '--btrfs-format /dev/sda5'
+    DISTEM_BOOTSTRAP_OPT='--btrfs-format /dev/sda5'
 else
-    DISTEM_BOOTSTRAP_OPT = ''
+    DISTEM_BOOTSTRAP_OPT=''
 fi
 distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT
 
@@ -78,9 +78,9 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 
 # setup distem
 if $SHARED; then
-    DISTEM_SETUP_OPT = '-s'
+    DISTEM_SETUP_OPT='-s'
 else
-    DISTEM_SETUP_OPT = ''
+    DISTEM_SETUP_OPT=''
 fi
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE $DISTEM_SETUP_OPT"
 
