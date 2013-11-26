@@ -86,7 +86,12 @@ echo 'group main' > $CHARM_NODELIST_TMP
 for i in `cat $IPFILE_TMP`; do echo "host $i" >> $CHARM_NODELIST_TMP; done
 scp $CHARM_NODELIST_TMP root@$SERVER:$CHARM_NODELIST
 for i in `cat $IPFILE_TMP`; do ssh root@$i "rm -rf $CHARM_HOME"; done
-for i in `cat $IPFILE_TMP`; do (scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME &); done
+
+if $SHARED; then
+    for i in `cat $DISTEM_NODES_TMP`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:/tmp/distem/rootfs-shared/distem-fs-*`dirname $CHARM_HOME`; done  
+else
+    for i in `cat $IPFILE_TMP`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
+fi
 
 ### Connect the head node
 ssh -X root@$SERVER
