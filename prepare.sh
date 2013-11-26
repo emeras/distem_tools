@@ -4,7 +4,7 @@ set -eux
 ### PARAMS
 VM=${1:-1}
 VCORE=${2:-1}
-DEPLOY=${3:-false}
+DEPLOY=${3:-true}
 ###############################################################################
 ### ENV VAR
 ENV_DEPLOY="wheezy-x64-nfs"
