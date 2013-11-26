@@ -24,13 +24,13 @@ COMPILE_OPTIONS="-O3"
 ###############################################################################
 
 #oarsub -t deploy -l slash_22=1+cluster=1,nodes=4,walltime=8 'sleep 999999'
-#katapult3 -e $ENV_DEPLOY -c
+katapult3 -e $ENV_DEPLOY -c
 
 SERVER=`cat $OAR_NODEFILE | sort -u | head -1`
 ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
 
-#distem-bootstrap -g -D --btrfs-format /dev/sda5 
-distem-bootstrap
+distem-bootstrap -g -D --btrfs-format /dev/sda5 
+#distem-bootstrap
 
 cat $OAR_NODEFILE | sort -u -V > DISTEM_NODES
 echo `g5k-subnets -sp` > G5K_NET

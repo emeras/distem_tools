@@ -171,8 +171,8 @@ Distem.client do |cl|
       node = "#{pnode}_#{i}"
       vnodelist << node
       cl.vnode_create(node, { 'host' => pnode }, sshkeys)
-      #cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true})
-      cl.vfilesystem_create(node, { 'image' => FSIMG })
+      cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true})
+      #cl.vfilesystem_create(node, { 'image' => FSIMG })
       iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
       iplist << iface['address'].split('/')[0]
 
