@@ -17,8 +17,8 @@ ssh_key:        'id_rsa'
 ipfile:         "/tmp/distem_vnodes_ip"
 cpu_algo:       "hogs"
 # cpu_algo:       "gov"
-distem_setup_file:      "/home/jemeras/public/distem/distem_tools/2_distem-setup.rb"
-distem_setup_dest: 	"/root/distem_setup.rb"
+distem_setup_file:      "/home/jemeras/public/distem/distem_tools/distem-setup.rb"
+distem_setup_dest: 	"/root/distem-setup.rb"
 
 ### Stencil
 CHARM_SOURCE: "/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
