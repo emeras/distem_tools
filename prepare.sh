@@ -4,12 +4,9 @@ set -eux
 ### PARAMS
 VM=$1
 VCORE=$2
-
 ###############################################################################
 ### ENV VAR
 ENV_DEPLOY="wheezy-x64-nfs"
-CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
-CHARM_HOME='/root/charm-6.5.1'
 
 # Distem related variables
 FSIMG="file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
@@ -20,6 +17,8 @@ IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 
 # Charm++ related
+CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
+CHARM_HOME='/root/charm-6.5.1'
 ARCH='net-linux-x86_64'
 COMPILE_OPTIONS="-O3"
 ###############################################################################
@@ -55,11 +54,11 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 # compile Mol2D
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 
-# copy all on the nodes
-ssh root@$SERVER "NODES=$NODES for i in `cat $NODES` ; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
+# copy CHARM_HOME on the nodes
+for i in `cat $OAR_NODE_FILE | sort -u -V`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # setup distem
-ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO ~jemeras/public/distem/distem_tools/distem-setup.rb -v $VM -c $VCORE"
+ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO ~jemeras/public/distem/distem_tools/distem-setup.rb -m $VM -c $VCORE"
 
 # create nodelist for charm
 ssh root@$SERVER "echo 'group main' > $CHARM_HOME/vnodeslist"
