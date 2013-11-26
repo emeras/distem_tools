@@ -13,7 +13,7 @@ require 'getoptlong'
 
 def usage_message
     <<EOS
-Usage ./2_distem-setup.rb [OPTIONS]
+Usage distem-setup [OPTIONS]
 
         OPTIONS:
                 --vm | -m <vm per host>: define how many vm per host are to be created (default is one)
