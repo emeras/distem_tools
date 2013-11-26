@@ -26,13 +26,13 @@ COMPILE_OPTIONS="-O3"
 #oarsub -t deploy -l slash_22=1+cluster=1,nodes=4,walltime=8 'sleep 999999'
 katapult3 -e $ENV_DEPLOY -c
 
-SERVER=`cat $OAR_NODEFILE | sort -u | head -1`
+SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
 ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
 
-distem-bootstrap -g -D --btrfs-format /dev/sda5 
-#distem-bootstrap
+distem-bootstrap -g -D --btrfs-format /dev/sda5 -c $SERVER
+#distem-bootstrap -D -c $SERVER
 
-cat $OAR_NODEFILE | sort -u -V > DISTEM_NODES
+cat $OAR_NODE_FILE | sort -u -V > DISTEM_NODES
 echo `g5k-subnets -sp` > G5K_NET
 taktuk -l root -f DISTEM_NODES broadcast exec [ "echo \"Host *
 StrictHostKeyChecking no
@@ -54,8 +54,8 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 # compile Mol2D
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 
-# copy CHARM_HOME on the nodes
-for i in `cat $OAR_NODE_FILE | sort -u -V`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
+# copy CHARM_HOME from first node to all the other nodes
+for i in `cat $OAR_NODE_FILE | sort -u -V | tail -n +2`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # setup distem
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO ~jemeras/public/distem/distem_tools/distem-setup.rb -m $VM -c $VCORE"
