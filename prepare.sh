@@ -29,16 +29,19 @@ katapult3 -e $ENV_DEPLOY -c
 SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
 ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
 
-distem-bootstrap -D --btrfs-format /dev/sda5 -c $SERVER # opt: use -g to use git source instead of release
-#distem-bootstrap -D -c $SERVER
 
-cat $OAR_NODE_FILE | sort -u -V > DISTEM_NODES
-echo `g5k-subnets -sp` > G5K_NET
-taktuk -l root -f DISTEM_NODES broadcast exec [ "echo \"Host *
+DISTEM_NODES_TMP=`mktemp`
+G5K_NET_TMP=`mktemp`
+cat $OAR_NODE_FILE | sort -u -V > $DISTEM_NODES_TMP
+echo `g5k-subnets -sp` > $G5K_NET_TMP
+taktuk -l root -f $DISTEM_NODES_TMP broadcast exec [ "echo \"Host *
 StrictHostKeyChecking no
 NoHostAuthenticationForLocalhost yes\" >> /root/.ssh/config" ]
-scp DISTEM_NODES root@$SERVER:$NODES; rm DISTEM_NODES 
-scp G5K_NET root@$SERVER:$NET; rm G5K_NET
+
+distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP --btrfs-format /dev/sda5 #opt: use -g to use git source instead of release
+
+scp $DISTEM_NODES_TMP root@$SERVER:$NODES
+scp $G5K_NET_TMP root@$SERVER:$NET
 
 # Now on Master
 ssh root@$SERVER "cp -r $CHARM_SOURCE $CHARM_HOME"
