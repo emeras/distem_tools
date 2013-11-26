@@ -68,8 +68,8 @@ ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IP
 
 # create nodelist for charm and copy CHARM_HOME on vnodes
 ssh root@$SERVER "echo 'group main' > $CHARM_NODELIST"
-ssh root@$SERVER "for i in `cat $IPFILE`; do echo "host $i" >> $CHARM_NODELIST; done"
-ssh root@$SERVER "for i in `cat $IPFILE`; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
+ssh root@$SERVER "IPFILE=$IPFILE ; for i in `cat $IPFILE`; do echo "host $i" >> $CHARM_NODELIST; done"
+ssh root@$SERVER "IPFILE=$IPFILE ; for i in `cat $IPFILE`; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
 
 # Connect the head node
 ssh -X root@$SERVER

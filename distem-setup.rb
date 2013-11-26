@@ -27,7 +27,7 @@ opts = GetoptLong.new(
 [ "--vcore","-c",              GetoptLong::REQUIRED_ARGUMENT ],
 )
 ############################
-### ENV VAR needed.
+### ENV VAR needed. # TODO: set as parameter or other cleaner method
 FSIMG=ENV["FSIMG"]
 NODES=ENV["NODES"]
 NET=ENV["NET"]
@@ -166,18 +166,17 @@ Distem.client do |cl|
     # check that user required toplogy is ok with what we have
     raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' if ncores < vm_per_host * core_per_vm 
     
-    
     for i in 1..vm_per_host
       node = "#{pnode}_#{i}"
       vnodelist << node
       cl.vnode_create(node, { 'host' => pnode }, sshkeys)
-      cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true})
+      cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true}) # TODO: set an option to determine if cow will be used
       #cl.vfilesystem_create(node, { 'image' => FSIMG })
       iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
       iplist << iface['address'].split('/')[0]
 
       cl.vcpu_create(node, corenb = core_per_vm, frequency = 1.0) 
-      #cl.vmem_create(memory, swap)    # Memory needs a special kernel option
+      #cl.vmem_create(memory, swap)    # TODO: Memory needs a special kernel option, set this as an option
     end
 
   end
@@ -215,6 +214,7 @@ Distem.client do |cl|
 
   puts 'Finalizing VNodes Config'
   vnodelist.each do |node|
+    # Configure network on vnodes
     cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
   end
 
