@@ -10,7 +10,7 @@ TOTAL_CORES=$(($NBNODES * $NBCORES))
 WAVE_PARAMS='12288 12288'
 
 # DO THIS ON FIRST VNODE
-ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64/examples/charm++/wave2d ; ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/vnodeslist ./wave2d $WAVE_PARAMS"
+ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64/examples/charm++/wave2d ; ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./wave2d $WAVE_PARAMS"
 
 # TODO: grab results
 

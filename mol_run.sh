@@ -9,7 +9,7 @@ TOTAL_CORES=$(($NBNODES * $NBCORES))
 
 
 # DO THIS ON FIRST VNODE
-ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64/examples/charm++/Molecular2D ; ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/vnodeslist ./mol2d"
+ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64/examples/charm++/Molecular2D ; ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./mol2d"
 
 # TODO: grab results
 

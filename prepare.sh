@@ -15,12 +15,15 @@ NET="/root/G5K_NET"
 SSH_KEY='id_rsa'
 IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
+DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
 
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
+CHARM_NODELIST="$CHARM_HOME/nodelist"
 ARCH='net-linux-x86_64'
 COMPILE_OPTIONS="-O3"
+
 ###############################################################################
 
 #oarsub -t deploy -l slash_22=1+cluster=1,nodes=4,walltime=8 'sleep 999999'
@@ -61,11 +64,11 @@ ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
 #for i in `cat $OAR_NODE_FILE | sort -u -V | tail -n +2`; do scp -rp root@$SERVER:$CHARM_HOME root@$i:$CHARM_HOME; done
 
 # setup distem
-ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO ~jemeras/public/distem/distem_tools/distem-setup.rb -m $VM -c $VCORE"
+ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE"
 
 # create nodelist for charm and copy CHARM_HOME on vnodes
-ssh root@$SERVER "echo 'group main' > $CHARM_HOME/vnodeslist"
-ssh root@$SERVER "for i in `cat $IPFILE`; do echo "host $i" >> $CHARM_HOME/vnodeslist; done"
+ssh root@$SERVER "echo 'group main' > $CHARM_NODELIST"
+ssh root@$SERVER "for i in `cat $IPFILE`; do echo "host $i" >> $CHARM_NODELIST; done"
 ssh root@$SERVER "for i in `cat $IPFILE`; do scp -rp $CHARM_HOME root@$i:$CHARM_HOME; done"
 
 # Connect the head node
