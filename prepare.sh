@@ -2,8 +2,9 @@
 set -eux
 ###############################################################################
 ### PARAMS
-VM=$1
-VCORE=$2
+VM=${1:-1}
+VCORE=${2:-1}
+DEPLOY=${3:-false}
 ###############################################################################
 ### ENV VAR
 ENV_DEPLOY="wheezy-x64-nfs"
@@ -18,6 +19,7 @@ CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
 #SHARED=true
 SHARED=false
+
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
@@ -28,7 +30,9 @@ COMPILE_OPTIONS="-O3"
 ###############################################################################
 
 #oarsub -t deploy -l slash_22=1+cluster=1,nodes=4,walltime=8 'sleep 999999'
-katapult3 -e $ENV_DEPLOY -c
+if $DEPLOY; then
+    katapult3 -e $ENV_DEPLOY -c
+fi
 
 SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
 ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
