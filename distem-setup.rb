@@ -179,7 +179,7 @@ Distem.client do |cl|
       iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
       iplist << iface['address'].split('/')[0]
 
-      cl.vcpu_create(node, corenb = core_per_vm, frequency = 1.0)
+      cl.vcpu_create(node, frequency = 1.0, 'ratio', corenb = core_per_vm)
     end
 
   end
