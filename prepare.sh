@@ -11,6 +11,7 @@ ENV_DEPLOY="wheezy-x64-nfs"
 
 # Distem related variables
 FSIMG="file:///home/ejeanvoine/public/distem/distem-fs-wheezy.tar.gz"
+DISTEM_BOOTSTRAP="/home/ejeanvoine/distem-bootstrap"
 NODES="/root/DISTEM_NODES"
 NET="/root/G5K_NET"
 SSH_KEY='id_rsa'
@@ -51,7 +52,7 @@ if $SHARED; then
 else
     DISTEM_BOOTSTRAP_OPT='--btrfs-format /dev/sda5'
 fi
-distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT -g
+$DISTEM_BOOTSTRAP -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT -g
 
 scp $DISTEM_NODES_TMP root@$SERVER:$NODES
 scp $G5K_NET_TMP root@$SERVER:$NET
