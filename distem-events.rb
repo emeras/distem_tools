@@ -20,12 +20,12 @@ event_freq_max = 120
 
 # Distribution specific based events
 Distem.client do |cl|
-  pnode = node_name.partition('_')[0]
-  freq_values = cl.pnode_info(target = pnode)['cpu']['cores'][0]['frequencies']
+  pnode = node_name.partition('_').first
+  freq_values = cl.pnode_info(target = pnode)['cpu']['cores'].first['frequencies']
   max = freq_values.max.dup
   max.slice!(/ MHz/)
-  max = max.to_i - 1  # BUG: do not set to max, problem with killing distem hogs process
-  min = 2             # BUG: set min > 1 as these are special values (mean cpu percentage)
+  max = max.to_i
+  min = 2             # set min > 1 as these are special values (mean cpu percentage)
   
   generator_desc = {}
   generator_desc['date'] = {}
