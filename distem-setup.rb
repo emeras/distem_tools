@@ -18,7 +18,7 @@ Usage distem-setup [OPTIONS]
         OPTIONS:
                 --vm | -m <vm per host>: define how many vm per host are to be created (default is one)
                 --vcore | -c <core per vm>: define how many core per vm are to be setup (default is one)
-                --shared | -s: use shared vm images with btrfs and cow (default is false)
+                --shared | -s: use shared vnode images (default is false)
 EOS
 end
 opts = GetoptLong.new(
