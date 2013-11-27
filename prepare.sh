@@ -18,7 +18,6 @@ IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
 SHARED=true
-#SHARED=false
 
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
@@ -45,12 +44,14 @@ StrictHostKeyChecking no
 NoHostAuthenticationForLocalhost yes\" >> /root/.ssh/config" ]
 
 ### setup distem
+
+# If we do not use shared images we need to use a btrfs partition to host the root image.
 if $SHARED; then
-    DISTEM_BOOTSTRAP_OPT='--btrfs-format /dev/sda5'
-else
     DISTEM_BOOTSTRAP_OPT=''
+else
+    DISTEM_BOOTSTRAP_OPT='--btrfs-format /dev/sda5'
 fi
-distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT
+distem-bootstrap -D -c $SERVER -f $DISTEM_NODES_TMP $DISTEM_BOOTSTRAP_OPT -g
 
 scp $DISTEM_NODES_TMP root@$SERVER:$NODES
 scp $G5K_NET_TMP root@$SERVER:$NET
