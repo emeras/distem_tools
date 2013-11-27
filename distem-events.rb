@@ -5,7 +5,7 @@ require 'distem'
 # Name of node to disturb (as given in distem --get-vnode-info)
 node_name = ARGV[0]
 # Duration of disturbance
-event_duration = ARGV[1]
+event_duration = ARGV[1].to_i
 
 # Event Frequencies in seconds -- min and max values for uniform law parameters
 event_freq_min = 1
@@ -20,8 +20,8 @@ event_freq_max = 120
 
 # Distribution specific based events
 Distem.client do |cl|
-
-  freq_values = cl.pnode_info(target = node_name)['cpu']['cores']['frequencies']
+  pnode = node_name.partition('_')[0]
+  freq_values = cl.pnode_info(target = pnode)['cpu']['cores'][0]['frequencies']
   max = freq_values.max.dup
   max.slice!(/ MHz/)
   max = max.to_i - 1  # BUG: do not set to max, problem with killing distem hogs process
