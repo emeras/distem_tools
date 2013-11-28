@@ -25,7 +25,8 @@ CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
 CHARM_NODELIST="$CHARM_HOME/nodelist"
 ARCH='net-linux-x86_64'
-COMPILE_OPTIONS="-O3"
+#COMPILE_OPTIONS="-O3"
+COMPILE_OPTIONS="syncft -O3"  #-DCK_NO_PROC_POOL=1
 
 ###############################################################################
 
