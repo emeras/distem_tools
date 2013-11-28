@@ -24,9 +24,11 @@ SHARED=true
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
 CHARM_HOME='/root/charm-6.5.1'
 CHARM_NODELIST="$CHARM_HOME/nodelist"
-ARCH='net-linux-x86_64'
-#COMPILE_OPTIONS="-O3"
-COMPILE_OPTIONS="syncft -O3"  #-DCK_NO_PROC_POOL=1
+BUILD='net-linux-x86_64'
+BUILD_PATH=$BUILD
+BUILD_OPTION='syncft'
+BUILD_PATH=$BUILD_PATH-$BUILD_OPTION
+COMPILE_OPTIONS="-O3"  #-DCK_NO_PROC_POOL=1
 
 ###############################################################################
 
@@ -72,17 +74,17 @@ ssh root@$SERVER "apt-get install -y --force-yes liblz-dev lib32z-dev"
 # Install other usefull packages for NBP
 ssh root@$SERVER "apt-get install -y --force-yes fortran77-compiler gfortran gfortran-multilib"
 # compile charm
-ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $ARCH* ; ./build charm++ $ARCH $COMPILE_OPTIONS"
+ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $BUILD* ; ./build charm++ $BUILD $BUILD_OPTION $COMPILE_OPTIONS"
 # compile stencil3D
-ssh root@$SERVER "make projections -C $CHARM_HOME/$ARCH/examples/charm++/load_balancing/stencil3d/"
+ssh root@$SERVER "make projections -C $CHARM_HOME/$BUILD_PATH/examples/charm++/load_balancing/stencil3d/"
 # compile liveViz and wave2d
 ssh root@$SERVER "make clean -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/"
 ssh root@$SERVER "make -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/"
-ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
+ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/examples/charm++/wave2d/"
 # compile Mol2D
-ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
+ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/examples/charm++/Molecular2D/"
 # compile stencil with checkpoint enabled (jacobi)
-ssh root@$SERVER "make projections -C $CHARM_HOME/$ARCH/tests/charm++/jacobi3d"
+ssh root@$SERVER "make projections -C $CHARM_HOME/$BUILD_PATH/tests/charm++/jacobi3d"
 
 
 # create nodelist for charm and copy CHARM_HOME on vnodes
