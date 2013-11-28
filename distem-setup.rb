@@ -172,7 +172,7 @@ Distem.client do |cl|
       vnodelist << node
       cl.vnode_create(node, { 'host' => pnode }, sshkeys)
       if (shared == true)
-	cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'cow' => true})
+	cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'sharedpath'=>"/tmp/distem/rootfs-shared/"})
       else
 	cl.vfilesystem_create(node, { 'image' => FSIMG })
       end
