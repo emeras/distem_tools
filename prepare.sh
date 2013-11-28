@@ -19,7 +19,7 @@ IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
 SHARED=true
-CHECKPOINT=false
+CHECKPOINT=true
 SMP=false
 
 # Charm++ related
