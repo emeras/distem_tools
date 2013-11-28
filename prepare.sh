@@ -19,6 +19,8 @@ IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
 SHARED=true
+CHECKPOINT=false
+SMP=false
 
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
@@ -26,9 +28,20 @@ CHARM_HOME='/root/charm-6.5.1'
 CHARM_NODELIST="$CHARM_HOME/nodelist"
 BUILD='net-linux-x86_64'
 BUILD_PATH=$BUILD
-BUILD_OPTION='syncft'
-BUILD_PATH=$BUILD_PATH-$BUILD_OPTION
 COMPILE_OPTIONS="-O3"  #-DCK_NO_PROC_POOL=1
+BUILD_ALL_OPTIONS=''
+
+if $CHECKPOINT; then
+    OPTION='syncft'
+    BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
+    BUILD_PATH=$BUILD_PATH-$OPTION
+fi
+
+if $SMP; then
+    OPTION='smp'
+    BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
+    BUILD_PATH=$BUILD_PATH-$OPTION
+fi
 
 ###############################################################################
 
@@ -68,13 +81,14 @@ fi
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE $DISTEM_SETUP_OPT"
 
 ### build charm
+ssh root@$SERVER "rm -rf $CHARM_HOME"
 ssh root@$SERVER "cp -r $CHARM_SOURCE $CHARM_HOME"
 # Install compression packages needed by projections
 ssh root@$SERVER "apt-get install -y --force-yes liblz-dev lib32z-dev"
 # Install other usefull packages for NBP
 ssh root@$SERVER "apt-get install -y --force-yes fortran77-compiler gfortran gfortran-multilib"
 # compile charm
-ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $BUILD* ; ./build charm++ $BUILD $BUILD_OPTION $COMPILE_OPTIONS"
+ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $BUILD* ; ./build charm++ $BUILD $BUILD_ALL_OPTIONS $COMPILE_OPTIONS"
 # compile stencil3D
 ssh root@$SERVER "make projections -C $CHARM_HOME/$BUILD_PATH/examples/charm++/load_balancing/stencil3d/"
 # compile liveViz and wave2d
