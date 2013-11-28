@@ -81,6 +81,9 @@ ssh root@$SERVER "make -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/"
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/wave2d/"
 # compile Mol2D
 ssh root@$SERVER "make -C $CHARM_HOME/$ARCH/examples/charm++/Molecular2D/"
+# compile stencil with checkpoint enabled (jacobi)
+ssh root@$SERVER "make projections -C $CHARM_HOME/$ARCH/tests/charm++/jacobi3d"
+
 
 # create nodelist for charm and copy CHARM_HOME on vnodes
 IPFILE_TMP=`mktemp` ; scp root@$SERVER:$IPFILE $IPFILE_TMP
