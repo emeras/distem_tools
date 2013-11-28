@@ -31,14 +31,15 @@ BUILD_PATH=$BUILD
 COMPILE_OPTIONS="-O3"  #-DCK_NO_PROC_POOL=1
 BUILD_ALL_OPTIONS=''
 
-if $CHECKPOINT; then
-    OPTION='syncft'
+# SMP option is taken before syncft in the build path
+if $SMP; then
+    OPTION='smp'
     BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
     BUILD_PATH=$BUILD_PATH-$OPTION
 fi
 
-if $SMP; then
-    OPTION='smp'
+if $CHECKPOINT; then
+    OPTION='syncft'
     BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
     BUILD_PATH=$BUILD_PATH-$OPTION
 fi
