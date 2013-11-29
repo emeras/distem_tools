@@ -9,8 +9,9 @@ event_duration = ARGV[1].to_i
 
 # Event Frequencies in seconds -- min and max values for uniform law parameters
 event_freq_min = 1
-event_freq_max = 120
+event_freq_max = 10
 
+generator_desc = {}
 Distem.client do |cl|
   generator_desc['date'] = {}
   generator_desc['date']['distribution'] = 'uniform'
