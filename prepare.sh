@@ -91,6 +91,7 @@ ssh root@$SERVER "apt-get install -y --force-yes fortran77-compiler gfortran gfo
 # compile charm
 ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $BUILD* ; ./build charm++ $BUILD $BUILD_ALL_OPTIONS $COMPILE_OPTIONS"
 # compile stencil3D
+ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/examples/charm++/load_balancing/stencil3d/"
 ssh root@$SERVER "make projections -C $CHARM_HOME/$BUILD_PATH/examples/charm++/load_balancing/stencil3d/"
 # compile liveViz and wave2d
 ssh root@$SERVER "make clean -C $CHARM_HOME/tmp/libs/ck-libs/liveViz/"
@@ -99,6 +100,7 @@ ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/examples/charm++/wave2d/"
 # compile Mol2D
 ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/examples/charm++/Molecular2D/"
 # compile stencil with checkpoint enabled (jacobi)
+ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/tests/charm++/jacobi3d"
 ssh root@$SERVER "make projections -C $CHARM_HOME/$BUILD_PATH/tests/charm++/jacobi3d"
 
 
