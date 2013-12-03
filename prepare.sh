@@ -19,8 +19,10 @@ IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
 SHARED=true
-CHECKPOINT=false
-SMP=false
+if [ "$CHECKPOINT" == ""  ]; then
+    CHECKPOINT=false
+fi
+# SMP=false
 
 # Charm++ related
 CHARM_SOURCE="/home/jemeras/public/distem/distem_experiments/charm-6.5.1/"
@@ -28,20 +30,23 @@ CHARM_HOME='/root/charm-6.5.1'
 CHARM_NODELIST="$CHARM_HOME/nodelist"
 BUILD='net-linux-x86_64'
 BUILD_PATH=$BUILD
-COMPILE_OPTIONS="-O3"  #-DCK_NO_PROC_POOL=1
+COMPILE_OPTIONS=''  #-DCK_NO_PROC_POOL=1
 BUILD_ALL_OPTIONS=''
 
-# SMP option is taken before syncft in the build path
-if $SMP; then
-    OPTION='smp'
-    BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
-    BUILD_PATH=$BUILD_PATH-$OPTION
-fi
+# # SMP option is taken before syncft in the build path
+# if $SMP; then
+#     OPTION='smp'
+#     BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
+#     BUILD_PATH=$BUILD_PATH-$OPTION
+# fi
 
 if $CHECKPOINT; then
     OPTION='syncft'
     BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
     BUILD_PATH=$BUILD_PATH-$OPTION
+    COMPILE_OPTIONS=$COMPILE_OPTIONS" -j4  -g -O0"
+else
+    COMPILE_OPTIONS=$COMPILE_OPTIONS" -O3"
 fi
 
 ###############################################################################
