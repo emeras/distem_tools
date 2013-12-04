@@ -165,8 +165,9 @@ Distem.client do |cl|
     #swap = info['memory']['swap']
     
     # check that user required toplogy is ok with what we have
-    raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' if ncores < vm_per_host * core_per_vm 
-    
+    if( (core_per_vm > 0)  && (ncores < vm_per_host * core_per_vm) )
+	raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' 
+    end
     for i in 1..vm_per_host
       node = "#{pnode}_#{i}"
       vnodelist << node
