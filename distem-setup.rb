@@ -188,7 +188,7 @@ Distem.client do |cl|
   puts 'Starting VNodes'
   puts "IPs: #{iplist}"
   # Start nodes
-  cl.vnodes_start(vnodelist, async=true)
+  cl.vnodes_start(vnodelist, async=false)
   puts "Waiting for vnodes to be here..."
   lock = Mutex.new
   nb_reachable = 0

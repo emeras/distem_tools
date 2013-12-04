@@ -8,9 +8,9 @@ ssh nancy
 ssh-keygen -t rsa
 cat .ssh/id_rsa.pub >> .ssh/authorized_keys
 
-### Reserve some nodes, with this command you have 4 nodes for 4 hours
-# Note: it is possible top reserve different IP range: e.g. /16=65,534 IP, /18=16,382 IP, /22=1,022 IP 
-JOB=`oarsub -t deploy -l slash_22=1+cluster=1/nodes=4,walltime="04:00:00" 'sleep 99999999' 2>&1 | awk -F 'OAR_JOB_ID=' '{print $2}' | tail -n 1`
+### Reserve some nodes
+# Note: it is possible to reserve different IP range: e.g. /16=65,534 IP, /18=16,382 IP, /22=1,022 IP 
+JOB=`oarsub -t deploy -l slash_18=1+cluster=1/nodes=10,walltime="04:00:00" 'sleep 99999999' 2>&1 | awk -F 'OAR_JOB_ID=' '{print $2}' | tail -n 1`
 
 ### Wait for the job to be running (State = R)
 oarstat -j $JOB
@@ -38,7 +38,7 @@ cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops
 for i in `cat /root/DISTEM_NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done
 # Then run mpi
 rm run_times.log
-for i in {1..100}; do
+for i in {1..20}; do
   /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile /tmp/distem_vnodes_ip --mca btl tcp,self ./collective_ops; 
 done
 
