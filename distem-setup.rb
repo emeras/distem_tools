@@ -47,9 +47,9 @@ opts.each do |option, value|
         elsif (option == "--shared")
                 shared = true
         elsif (option == "--vm")
-                vm_per_host = value.to_i if value.to_i >1
+                vm_per_host = value.to_i #if value.to_i >1
         elsif (option == "--vcore")
-                core_per_vm = value.to_i if value.to_i >1                
+                core_per_vm = value.to_i #if value.to_i >1                
   end
 end
 
