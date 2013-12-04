@@ -9,7 +9,8 @@ ssh-keygen -t rsa
 cat .ssh/id_rsa.pub >> .ssh/authorized_keys
 
 ### Reserve some nodes, with this command you have 4 nodes for 4 hours
-JOB=`oarsub -t deploy -l slash_22=1+nodes=4,walltime="04:00:00" 'sleep 99999999' 2>&1 | awk -F 'OAR_JOB_ID=' '{print $2}' | tail -n 1`
+# Note: it is also possible top reserve larger IP range: e.g. /16=65,534 IPs or /18=16,382 IPs
+JOB=`oarsub -t deploy -l slash_22=1+cluster=1/nodes=4,walltime="04:00:00" 'sleep 99999999' 2>&1 | awk -F 'OAR_JOB_ID=' '{print $2}' | tail -n 1`
 
 ### Wait for the job to be running (State = R)
 oarstat -j $JOB
@@ -22,3 +23,21 @@ oarsub -C $JOB
 
 ### Optional: Run test experiment (stencil3D)
 ~jemeras/public/distem/distem_tools/stencil_run.sh <TOTAL_NB_CORES>
+
+
+
+
+############################
+### Other types of tests ###
+############################
+
+### Distem scalability tests
+# On first node (i.e. $SERVER), do:
+cp ~jemeras/public/distem/distem_tools/collective_ops.c /root/
+cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops
+for i in `cat /root/DISTEM_NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done
+# Then run mpi
+time mpirun -machinefile /tmp/distem_vnodes_ip --mca btl tcp,self ./collective_ops
+
+
+
