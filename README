@@ -37,7 +37,10 @@ cp ~jemeras/public/distem/distem_tools/collective_ops.c /root/
 cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops
 for i in `cat /root/DISTEM_NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done
 # Then run mpi
-time mpirun -machinefile /tmp/distem_vnodes_ip --mca btl tcp,self ./collective_ops
+rm run_times.log
+for i in {1..100}; do
+  /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile /tmp/distem_vnodes_ip --mca btl tcp,self ./collective_ops; 
+done
 
 
 
