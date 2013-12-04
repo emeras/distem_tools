@@ -199,7 +199,7 @@ Distem.client do |cl|
       #puts "#{ip} is here"
       lock.synchronize {
         nb_reachable += 1
-        puts "#{nb_reachable}/#{nb_vnodes}" if ((nb_reachable % 100) == 0)
+        puts "#{nb_reachable}/#{vnodelist.size}" if ((nb_reachable % 100) == 0)
       }
     }
     win.add(p)
