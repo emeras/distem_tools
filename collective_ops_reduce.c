@@ -37,7 +37,7 @@ int main(int argc, char ** argv)
     
   MPI_Finalize();
   if (rank == 0) {
-    printf("Time in the loop: %1.2f\n", t_loop_stop-t_loop_start); 
+    printf("Time in the loop: %f\n", t_loop_stop-t_loop_start); 
     fflush(stdout);
   }
   return(0);
