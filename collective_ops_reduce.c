@@ -7,7 +7,7 @@
 int main(int argc, char ** argv)
 {
   int i, rank, out, nb_procs = 0;
-  int iter = 1000;
+  int iter = 100;
   int* array = 0;
   double t_loop_start, t_loop_stop, min_start, max_stop;
 
