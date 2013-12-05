@@ -7,13 +7,12 @@
 int main(int argc, char ** argv)
 {
   int i, rank, out, nb_procs = 0;
-  int iter = 100;
+  int iter = 1000;
   int* array = 0;
-  double t_loop_start, t_loop_stop;
-  
+  double t_loop_start, t_loop_stop, min_start, max_stop;
+
   MPI_Init(&argc, &argv);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-  MPI_Barrier(MPI_COMM_WORLD);
   if (rank == 0)
   {
     MPI_Comm_size(MPI_COMM_WORLD, &nb_procs);
@@ -31,8 +30,11 @@ int main(int argc, char ** argv)
       memset(array, 0, nb_procs);
     MPI_Gather(&out, 1, MPI_INT, array, 1, MPI_INT, 0, MPI_COMM_WORLD);
   }
-  MPI_Barrier(MPI_COMM_WORLD);
   t_loop_stop = MPI_Wtime();
+  
+  MPI_Reduce(&t_loop_start, &min_start, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+  MPI_Reduce(&t_loop_stop, &max_stop, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
+    
   MPI_Finalize();
   if (rank == 0) {
     printf("Time in the loop: %1.2f\n", t_loop_stop-t_loop_start); 
@@ -40,4 +42,3 @@ int main(int argc, char ** argv)
   }
   return(0);
 }
-
