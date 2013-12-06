@@ -67,4 +67,4 @@ ssh root@$SERVER "for i in `cat $DISTEM_NODES_TMP`; do scp -p collective_ops $i:
 # Then run mpi
 ssh root@$SERVER "rm run_times.log"
 ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
-ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT"
+ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT.`date +%s`"
