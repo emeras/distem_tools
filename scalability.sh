@@ -18,6 +18,7 @@ SSH_KEY='id_rsa'
 IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
+MPI_COLLECTIVE_FILE_PATH="~jemeras/public/distem/distem_tools"
 SHARED=true
 
 ###############################################################################
@@ -60,10 +61,10 @@ ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IP
 NBNODES=`cat $DISTEM_NODES_TMP | wc -l`
 NBVMTOT=$(($NBNODES * $VM))
 
-ssh root@$SERVER "cp ~jemeras/public/distem/distem_tools/collective_ops.c /root/"
+ssh root@$SERVER "cp $MPI_COLLECTIVE_FILE_PATH/collective_ops.c /root/"
 ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops"
-ssh root@$SERVER "for i in `cat /root/DISTEM_NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done"
+ssh root@$SERVER "for i in `cat $DISTEM_NODES_TMP`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done"
 # Then run mpi
 ssh root@$SERVER "rm run_times.log"
-ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile /tmp/distem_vnodes_ip --mca btl tcp,self ./collective_ops; done"
+ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
 ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT"
