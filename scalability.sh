@@ -63,8 +63,15 @@ NBVMTOT=$(($NBNODES * $VM))
 
 ssh root@$SERVER "cp $MPI_COLLECTIVE_FILE_PATH/collective_ops.c /root/"
 ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops"
-ssh root@$SERVER "cat $NODES | while read i; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done"
+ssh root@$SERVER "NODES=$NODES while read i; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
 # Then run mpi
 ssh root@$SERVER "rm run_times.log || true"
 ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
 ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT.`date +%s`"
+
+
+# TODO: 
+# should replace all for loops with `cat ...` by:
+# while read i; do
+#   CODE...
+# done < FILE
