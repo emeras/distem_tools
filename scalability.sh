@@ -58,12 +58,12 @@ else
 fi
 ssh root@$SERVER "FSIMG=$FSIMG NODES=$NODES NET=$NET SSH_KEY=$SSH_KEY IPFILE=$IPFILE CPU_ALGO=$CPU_ALGO $DISTEM_SETUP_FILE -m $VM -c $VCORE $DISTEM_SETUP_OPT"
 
-NBNODES=`ssh root@$SERVER "cat $DISTEM_NODES_TMP | wc -l"`
+NBNODES=`cat $DISTEM_NODES_TMP | wc -l`
 NBVMTOT=$(($NBNODES * $VM))
 
 ssh root@$SERVER "cp $MPI_COLLECTIVE_FILE_PATH/collective_ops.c /root/"
 ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops"
-ssh root@$SERVER "for i in `cat $DISTEM_NODES_TMP`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done"
+ssh root@$SERVER "for i in `cat $NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done"
 # Then run mpi
 ssh root@$SERVER "rm run_times.log"
 ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
