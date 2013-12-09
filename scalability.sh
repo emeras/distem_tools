@@ -17,7 +17,7 @@ NET="/root/G5K_NET"
 SSH_KEY='id_rsa'
 IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
-DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
+DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup_dev.rb"
 MPI_COLLECTIVE_FILE_PATH="~jemeras/public/distem/distem_tools"
 SHARED=true
 
