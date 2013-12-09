@@ -118,7 +118,7 @@ Distem.client do |cl|
 	  raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' 
       end
 	  
-      ###################################
+    ###################################
       (1..vm_per_host).each { |i| vnodelist << "#{pnode}_#{i}" }
       vnodes_config = {}
       vnodes_config['vifaces'] = [{'name' => vnet['interface'], 'vnetwork' => vnet['name']}]
@@ -132,13 +132,6 @@ Distem.client do |cl|
       
       res = cl.vnodes_create(vnodelist, vnodes_config)
       res.each { |r| iplist << r['vifaces'][0]['address'].split('/')[0] }
-      
-      ### Configure CPU -- TODO: put this before vnodes_create()
-      if core_per_vm > 0
-	vnodelist.each { |node|
-	  cl.vcpu_create(node, frequency = 1.0, 'ratio', corenb = core_per_vm)
-	}
-      end  
     ###################################
 
     ###################################
@@ -159,7 +152,15 @@ Distem.client do |cl|
     ###################################
     end
   end
-
+      
+  ### Configure CPU -- TODO: put this before vnodes_create()
+  if core_per_vm > 0
+    vnodelist.each { |node|
+      puts 'Setting VCPUs'
+      cl.vcpu_create(node, frequency = 1.0, 'ratio', corenb = core_per_vm)
+    }
+  end  
+  
   puts 'Starting VNodes'
   #puts "IPs: #{iplist}"
   # Start nodes
