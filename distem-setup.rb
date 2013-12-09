@@ -53,72 +53,6 @@ opts.each do |option, value|
   end
 end
 
-
-############################
-class SlidingWindow
-  def initialize(size)
-    @queue = []
-    @lock = Mutex.new
-    @finished = false
-    @size = size
-  end
-
-  def add(t)
-    @queue << t
-  end
-
-  def run
-    @queue = @queue.reverse
-    tids = []
-    (1..@size).each {
-      tids << Thread.new {
-        while !@finished do
-          task = nil
-          @lock.synchronize {
-            if @queue.size > 0
-              task = @queue.pop
-            else
-              @finished = true
-            end
-          }
-          if task
-            if task.is_a?(Proc)
-              task.call
-            else
-              system(task)
-            end
-          end
-        end
-      }
-    }
-    tids.each { |tid| tid.join }
-  end
-end
-
-def port_open?(ip, port)
-  begin
-    s = TCPSocket.new(ip, port)
-    s.close
-    return true
-  rescue Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ETIMEDOUT
-    return false
-  end
-end
-
-def wait_ssh(host, timeout = 120)
-    def now()
-      return Time.now.to_f
-    end
-    bound = now() + timeout
-    while now() < bound do
-        t = now()
-        return true if port_open?(host, 22)
-        dt = now() - t
-        sleep(0.5 - dt) if dt < 0.5
-    end
-    return false
-end
-
 #######################################################################
 #### Main ####
 #######################################################################
@@ -186,41 +120,28 @@ Distem.client do |cl|
   end
 
   puts 'Starting VNodes'
-  puts "IPs: #{iplist}"
+  #puts "IPs: #{iplist}"
   # Start nodes
   cl.vnodes_start(vnodelist, async=false)
   puts "Waiting for vnodes to be here..."
-  lock = Mutex.new
-  nb_reachable = 0
-  win = SlidingWindow.new(100)
-  iplist.each { |ip|
-    p = Proc.new {
-      exit! 1 if not wait_ssh(ip, 1200)
-      #puts "#{ip} is here"
-      lock.synchronize {
-        nb_reachable += 1
-        puts "#{nb_reachable}/#{vnodelist.size}" if ((nb_reachable % 100) == 0)
-      }
-    }
-    win.add(p)
-  }
-  win.run
-  puts "#{nb_reachable} nodes are here"
-
-  puts "Setting global /etc/hosts"
-  cl.set_global_etchosts
-  puts "Setting global ARP tables"
-  cl.set_global_arptable
-
-  File.open(IPFILE,'w') do |f|
-    iplist.each{ |ip| f.puts(ip) }
+  ret = cl.wait_vnodes({'timeout' => 600, 'vnodes'=>vnodelist, 'port' => 22})
+  if ret
+    puts "Setting global /etc/hosts"
+    cl.set_global_etchosts
+    puts "Setting global ARP tables"
+    a = Time.now.to_f
+    cl.set_global_arptable
+    puts "done in #{Time.now.to_f - a} seconds"
+    File.open(IPFILE,'w') do |f|
+      iplist.each{ |ip| f.puts(ip) }
+    end
+    puts 'Finalizing VNodes Config'
+    vnodelist.each do |node|
+      # Configure network on vnodes
+      cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
+    end
+    puts 'Terminated...'
+  else
+    puts "vnodes are unreachable"
   end
-
-  puts 'Finalizing VNodes Config'
-  vnodelist.each do |node|
-    # Configure network on vnodes
-    cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
-  end
-
-  puts 'Terminated...'
 end
