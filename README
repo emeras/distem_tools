@@ -41,6 +41,7 @@ rm run_times.log
 for i in {1..10}; do
   /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile /tmp/distem_vnodes_ip --mca btl tcp,self ./collective_ops; 
 done
-
+# Or:
+for i in 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do head -n $i ip > out; time mpirun --mca btl tcp,self -machinefile out ./collective_ops; done
 
 
