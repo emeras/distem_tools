@@ -19,6 +19,7 @@ Usage distem-setup [OPTIONS]
                 --vm | -m <vm per host>: define how many vm per host are to be created (default is one)
                 --vcore | -c <core per vm>: define how many core per vm are to be setup (default is one)
                 --shared | -s: use shared vnode images (default is false)
+                --noauto | -n: do not use Distem's automatic VM placement -- VM will be placed sequentially per pnode.
 EOS
 end
 opts = GetoptLong.new(
@@ -26,6 +27,7 @@ opts = GetoptLong.new(
 [ "--help", "-h",             GetoptLong::NO_ARGUMENT ],
 [ "--vm","-m",              GetoptLong::REQUIRED_ARGUMENT ],
 [ "--vcore","-c",              GetoptLong::REQUIRED_ARGUMENT ],
+[ "--noauto","-n",              GetoptLong::NO_ARGUMENT ],
 )
 ############################
 ### ENV VAR needed. # TODO: set as option or other cleaner method
@@ -36,7 +38,7 @@ SSH_KEY=ENV["SSH_KEY"]
 IPFILE=ENV["IPFILE"]
 CPU_ALGO=ENV["CPU_ALGO"]
 ############################
-
+auto_placement = true
 shared = false
 vm_per_host = 1
 core_per_vm = 1
@@ -49,7 +51,9 @@ opts.each do |option, value|
         elsif (option == "--vm")
                 vm_per_host = value.to_i #if value.to_i >1
         elsif (option == "--vcore")
-                core_per_vm = value.to_i #if value.to_i >1                
+                core_per_vm = value.to_i #if value.to_i >1   
+	elsif (option == "--noauto")
+		auto_placement = false
   end
 end
 
@@ -105,13 +109,16 @@ Distem.client do |cl|
         
     ###################################
     (1..vm_per_host).each { |i|
-      vnodelist << "#{pnode}_#{i}" 
-      #vnodelist << "node#{i}"  # automatic vm placement
+      if (auto_placement == true)
+        vnodelist << "node#{i}"            
+      else
+        vnodelist << "#{pnode}_#{i}"         
+      end
     }
-    vnodes_config = []
+    vnodes_config = {}
     vnodes_config['vifaces'] = [{'name' => vnet['interface'], 'vnetwork' => vnet['name']}]
     vnodes_config['ssh_key'] = sshkeys
-    vnodes_config['host'] = pnode  # To Remove for automatic placement
+    vnodes_config['host'] = pnode if (auto_placement == false)
     if (shared == true)
       vnodes_config['vfilesystem'] = { 'image' => FSIMG, 'shared' => true, 'sharedpath' => "/tmp/distem/rootfs-shared/" }
     else
