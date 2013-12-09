@@ -23,7 +23,7 @@ SHARED=true
 
 ###############################################################################
 
-rm ~/.ssh/known_hosts || true
+echo '' > ~/.ssh/known_hosts
 
 if $DEPLOY; then
     katapult3 -e $ENV_DEPLOY -c
