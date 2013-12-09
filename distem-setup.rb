@@ -140,24 +140,24 @@ Distem.client do |cl|
 # 	}
 #       end  
     ###################################
-    end
-    ###################################
-    for i in 1..vm_per_host
-      node = "#{pnode}_#{i}"
-      vnodelist << node
-      cl.vnode_create(node, { 'host' => pnode }, sshkeys)
-      if (shared == true)
-	cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'sharedpath' => "/tmp/distem/rootfs-shared/" })
-      else
-	cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => false, 'cow' => true })
-      end
-      iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
-      iplist << iface['address'].split('/')[0]
 
-      cl.vcpu_create(node, frequency = 1.0, 'ratio', corenb = core_per_vm) if core_per_vm > 0
-    end
     ###################################
-    
+      for i in 1..vm_per_host
+	node = "#{pnode}_#{i}"
+	vnodelist << node
+	cl.vnode_create(node, { 'host' => pnode }, sshkeys)
+	if (shared == true)
+	  cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'sharedpath' => "/tmp/distem/rootfs-shared/" })
+	else
+	  cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => false, 'cow' => true })
+	end
+	iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
+	iplist << iface['address'].split('/')[0]
+
+	cl.vcpu_create(node, frequency = 1.0, 'ratio', corenb = core_per_vm) if core_per_vm > 0
+      end
+    ###################################
+    end
   end
 
   puts 'Starting VNodes'
