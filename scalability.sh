@@ -20,14 +20,14 @@ CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup_dev.rb"
 MPI_COLLECTIVE_FILE_PATH="~jemeras/public/distem/distem_tools"
 SHARED=true
-AUTO=false
+AUTO=true
 
 ###############################################################################
 
 echo '' > ~/.ssh/known_hosts
-
+NODES_TO_DEPLOY=`cat $OAR_NODE_FILE | sort -u -V | wc -l`
 if $DEPLOY; then
-    katapult3 -e $ENV_DEPLOY -c
+    katapult3 -e $ENV_DEPLOY -c --min-deployed-nodes $NODES_TO_DEPLOY
 fi
 
 SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
