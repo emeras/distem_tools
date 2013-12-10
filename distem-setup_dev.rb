@@ -54,6 +54,8 @@ opts.each do |option, value|
                 core_per_vm = value.to_i #if value.to_i >1   
 	elsif (option == "--auto")
 		auto_placement = true
+		core_per_vm = 0
+		shared = true
   end
 end
 
@@ -83,7 +85,8 @@ Distem.client do |cl|
   puts 'Creating VNetwork'
   begin
     cl.vnetwork_create(vnet['name'], vnet['address'])
-  rescue "Unable to create network."
+  rescue Distem::Lib::ClientError
+    puts "Unable to create network."
   end
   # Creating virtual nodes
   puts 'Creating VNodes'
@@ -117,9 +120,12 @@ Distem.client do |cl|
       if( (core_per_vm > 0)  && (ncores < vm_per_host * core_per_vm) )
 	  raise ArgumentError, 'In arguments --vm and/or --vcore: not enough physical resources for this topology.' 
       end
-	  
-    ###################################
-      (1..vm_per_host).each { |i| vnodelist << "#{pnode}_#{i}" }
+      
+      vnodelist_tmp = []
+      for i in 1..vm_per_host
+	vnodelist_tmp << "#{pnode}_#{i}"
+	vnodelist << "#{pnode}_#{i}"
+      end
       vnodes_config = {}
       vnodes_config['vifaces'] = [{'name' => vnet['interface'], 'vnetwork' => vnet['name']}]
       vnodes_config['ssh_key'] = sshkeys
@@ -129,27 +135,12 @@ Distem.client do |cl|
       else
 	vnodes_config['vfilesystem'] = { 'image' => FSIMG, 'shared' => false, 'cow' => true }
       end
-      
-      res = cl.vnodes_create(vnodelist, vnodes_config)
-      res.each { |r| iplist << r['vifaces'][0]['address'].split('/')[0] }
-    ###################################
-
-    ###################################
-#       for i in 1..vm_per_host
-# 	node = "#{pnode}_#{i}"
-# 	vnodelist << node
-# 	cl.vnode_create(node, { 'host' => pnode }, sshkeys)
-# 	if (shared == true)
-# 	  cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => true, 'sharedpath' => "/tmp/distem/rootfs-shared/" })
-# 	else
-# 	  cl.vfilesystem_create(node, { 'image' => FSIMG, 'shared' => false, 'cow' => true })
-# 	end
-# 	iface = cl.viface_create(node, vnet['interface'], { 'vnetwork' => vnet['name'] })
-# 	iplist << iface['address'].split('/')[0]
-# 
-# 	cl.vcpu_create(node, frequency = 1.0, 'ratio', corenb = core_per_vm) if core_per_vm > 0
-#       end
-    ###################################
+      begin
+        res = cl.vnodes_create(vnodelist_tmp, vnodes_config)
+	res.each { |r| iplist << r['vifaces'][0]['address'].split('/')[0] }
+      rescue Distem::Lib::ClientError => e
+        puts "Unable to create Resource. Reason: #{e}\n nodelist: #{vnodelist}"
+      end  
     end
   end
       
