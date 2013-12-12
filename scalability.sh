@@ -24,14 +24,14 @@ AUTO=true
 
 ###############################################################################
 
-echo '' > ~/.ssh/known_hosts
+#echo '' > ~/.ssh/known_hosts
 NODES_TO_DEPLOY=`cat $OAR_NODE_FILE | sort -u -V | wc -l`
 if $DEPLOY; then
     katapult3 -e $ENV_DEPLOY -c --min-deployed-nodes $NODES_TO_DEPLOY
 fi
 
 SERVER=`cat $OAR_NODE_FILE | sort -u -V | head -1`
-ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
+#ssh root@$SERVER "distem --quit" || true ## ensure distem is dead
 
 DISTEM_NODES_TMP=`mktemp`
 G5K_NET_TMP=`mktemp`
@@ -69,10 +69,13 @@ NBVMTOT=$(($NBNODES * $VM))
 
 ssh root@$SERVER "cp $MPI_COLLECTIVE_FILE_PATH/collective_ops*.c /root/"
 ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops"
-ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_reduce.c -o collective_ops_reduce"
-ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_barrier.c -o collective_ops_barrier"
-ssh root@$SERVER "while read i; do scp -p collective_ops* \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
-ssh root@$SERVER "while read i; do scp -p $IPFILE \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
+#ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_reduce.c -o collective_ops_reduce"
+#ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_barrier.c -o collective_ops_barrier"
+
+taktuk -s -f $IPFILE broadcast put [ /root/collective_ops ] [ /root/collective_ops ]
+
+#ssh root@$SERVER "while read i; do scp -p collective_ops* \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
+#ssh root@$SERVER "while read i; do scp -p $IPFILE \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
 # Then run mpi
 ssh root@$SERVER "rm run_times.log || true"
 ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"

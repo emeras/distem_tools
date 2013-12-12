@@ -92,10 +92,6 @@ Distem.client do |cl|
   puts 'Creating VNodes'
   # Retrieve PNodes topology and info, update Pnodes setup (algos...)
   pnodes_info = {}
-  pnodes.each do |node|
-    pnodes_info[node] = cl.pnode_info(target = node)
-    cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>CPU_ALGO} }) if defined? CPU_ALGO
-  end
   vnodelist = []
     
   if (auto_placement == true)
@@ -108,6 +104,10 @@ Distem.client do |cl|
 		      })
       res.each { |r| iplist << r['vifaces'][0]['address'].split('/')[0] }
   else  
+    pnodes.each do |node|
+      pnodes_info[node] = cl.pnode_info(target = node)
+      cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>CPU_ALGO} }) if defined? CPU_ALGO
+    end
     pnodes_info.each do |key, info|
       pnode = key.dup
       #pnode.slice! ".grid5000.fr"   # this is for multisite use.

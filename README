@@ -35,7 +35,8 @@ oarsub -C $JOB
 # On first node (i.e. $SERVER), do:
 cp ~jemeras/public/distem/distem_tools/collective_ops.c /root/
 cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops
-for i in `cat /root/DISTEM_NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done
+taktuk -s -f /tmp/distem_vnodes_ip broadcast put [ /root/collective_ops ] [ /root/collective_ops ]
+#for i in `cat /root/DISTEM_NODES`; do scp -p collective_ops $i:/tmp/distem/rootfs-shared/*/root; done
 # Then run mpi
 rm run_times.log
 for i in {1..10}; do
