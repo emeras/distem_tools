@@ -75,7 +75,7 @@ ssh root@$SERVER "while read i; do scp -p collective_ops* \$i:/tmp/distem/rootfs
 ssh root@$SERVER "while read i; do scp -p $IPFILE \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
 # Then run mpi
 ssh root@$SERVER "rm run_times.log || true"
-ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops_reduce; done"
+ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
 ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT.`date +%s`"
 
 

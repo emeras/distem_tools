@@ -45,3 +45,5 @@ done
 for i in 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do head -n $i ip > out; time mpirun --mca btl tcp,self -machinefile out ./collective_ops; done
 
 
+# clustershell
+clush -w node[1-10000] true
