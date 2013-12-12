@@ -72,7 +72,7 @@ ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops"
 #ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_reduce.c -o collective_ops_reduce"
 #ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_barrier.c -o collective_ops_barrier"
 
-taktuk -s -f $IPFILE broadcast put [ /root/collective_ops ] [ /root/collective_ops ]
+ssh root@$SERVER "taktuk -s -f $IPFILE broadcast put [ /root/collective_ops ] [ /root/collective_ops ]"
 
 #ssh root@$SERVER "while read i; do scp -p collective_ops* \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
 #ssh root@$SERVER "while read i; do scp -p $IPFILE \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"

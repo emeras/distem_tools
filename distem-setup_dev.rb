@@ -106,7 +106,7 @@ Distem.client do |cl|
   else  
     pnodes.each do |node|
       pnodes_info[node] = cl.pnode_info(target = node)
-      cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>CPU_ALGO} }) if defined? CPU_ALGO
+      cl.pnode_update(target = node, desc = { "algorithms"=>{"cpu"=>CPU_ALGO} }) if (defined? CPU_ALGO && CPU_ALGO=='gov') # update only for gov since hogs is default value
     end
     pnodes_info.each do |key, info|
       pnode = key.dup
