@@ -168,11 +168,11 @@ Distem.client do |cl|
     File.open(IPFILE,'w') do |f|
       iplist.each{ |ip| f.puts(ip) }
     end
-    puts 'Finalizing VNodes Config'
-    vnodelist.each do |node|
-      # Configure network on vnodes
-      cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
-    end
+#     puts 'Finalizing VNodes Config'
+#     vnodelist.each do |node|
+#       # Configure network on vnodes
+#       cl.vnode_execute(node, "sh /root/set_gw.sh ; echo 'export http_proxy=\"http://proxy:3128\"' >> /root/.bashrc")
+#     end
     puts 'Terminated...'
   else
     puts "vnodes are unreachable"

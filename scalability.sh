@@ -20,8 +20,8 @@ CPU_ALGO="hogs"
 DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup_dev.rb"
 MPI_COLLECTIVE_FILE_PATH="~jemeras/public/distem/distem_tools"
 SHARED=true
-AUTO=true
-
+#AUTO=true
+AUTO=false
 ###############################################################################
 
 #echo '' > ~/.ssh/known_hosts
@@ -72,14 +72,18 @@ ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops.c -o collective_ops"
 #ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_reduce.c -o collective_ops_reduce"
 #ssh root@$SERVER "cd /root/ ; mpicc -O3 collective_ops_barrier.c -o collective_ops_barrier"
 
-ssh root@$SERVER "taktuk -s -f $IPFILE broadcast put [ /root/collective_ops ] [ /root/collective_ops ]"
+#ssh root@$SERVER "taktuk -s -f $IPFILE broadcast put [ /root/collective_ops ] [ /root/collective_ops ]"
+ssh root@$SERVER "while read i; do scp -p collective_ops* \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
+ssh root@$SERVER "while read i; do scp -p $IPFILE \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
+ssh root@$SERVER "taktuk -s -f $IPFILE broadcast exec [ hostname ]"
 
-#ssh root@$SERVER "while read i; do scp -p collective_ops* \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
-#ssh root@$SERVER "while read i; do scp -p $IPFILE \$i:/tmp/distem/rootfs-shared/*/root; done < $NODES"
+
 # Then run mpi
-ssh root@$SERVER "rm run_times.log || true"
-ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
-ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT.`date +%s`"
+# ssh root@$SERVER "rm run_times.log || true"
+# ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
+# ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT.`date +%s`"
+LOGFILE="/home/jemeras/public/expe.log.`date +%s`"
+ssh root@$SERVER "for t in {1..100}; do for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do head -n \$i $IPFILE > out; /usr/bin/time -f %e --output=$LOGFILE --append mpirun --mca btl tcp,self -machinefile out /root/collective_ops; done >> $LOGFILE; done"
 
 
 # TODO: 
