@@ -83,7 +83,7 @@ ssh root@$SERVER "taktuk -s -f $IPFILE broadcast exec [ hostname ]"
 # ssh root@$SERVER "for i in {1..10}; do /usr/bin/time -f %e --output=run_times.log --append mpirun -machinefile $IPFILE --mca btl tcp,self ./collective_ops; done"
 # ssh root@$SERVER "cp /root/run_times.log ~jemeras/public/run_times.log.$NBVMTOT.`date +%s`"
 LOGFILE="/home/jemeras/public/expe_log.`date +%s`"
-ssh root@$SERVER "for t in {1..100}; do for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do head -n \$i $IPFILE > out; /usr/bin/time -f %e --output=$LOGFILE".$i.total" --append mpirun --mca btl tcp,self -machinefile out /root/collective_ops; done >> $LOGFILE".$i.loop"; done"
+ssh root@$SERVER "for t in {1..100}; do for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do head -n \$i $IPFILE > out; /usr/bin/time -f %e --output=$LOGFILE".\$i.total" --append mpirun --mca btl tcp,self -machinefile out /root/collective_ops >> $LOGFILE".\$i.loop" ; done ; done"
 
 
 # TODO: 
