@@ -15,7 +15,7 @@ int main(int argc, char ** argv)
   if (rank == 0)
   {
     MPI_Comm_size(MPI_COMM_WORLD, &nb_procs);
-    printf("Running on %d procs\n", nb_procs);
+    printf("%d cores\n", nb_procs);
     array = (int*)calloc(nb_procs, sizeof(int));
     for (i = 0; i < nb_procs; i++)
       array[i] = nb_procs - i - 1;
