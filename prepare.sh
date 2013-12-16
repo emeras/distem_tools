@@ -17,7 +17,9 @@ NET="/root/G5K_NET"
 SSH_KEY='id_rsa'
 IPFILE="/tmp/distem_vnodes_ip"
 CPU_ALGO="hogs"
-DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
+if [ "$DISTEM_SETUP_FILE" == ""  ]; then
+    DISTEM_SETUP_FILE="/home/jemeras/public/distem/distem_tools/distem-setup.rb"
+fi
 SHARED=true
 if [ "$CHECKPOINT" == ""  ]; then
     CHECKPOINT=false
@@ -44,7 +46,7 @@ if $CHECKPOINT; then
     OPTION='syncft'
     BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
     BUILD_PATH=$BUILD_PATH-$OPTION
-    COMPILE_OPTIONS=$COMPILE_OPTIONS" -O0" # set optimization level to 0, O3 does not work for FT...
+    COMPILE_OPTIONS=$COMPILE_OPTIONS" -O2" # set lower optimization level, O3 does not work for FT...
 else
     COMPILE_OPTIONS=$COMPILE_OPTIONS" -O3"
 fi
