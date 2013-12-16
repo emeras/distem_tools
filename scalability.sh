@@ -87,8 +87,8 @@ echo 'Running MPI'
 ssh root@$SERVER "for t in {1..100}; do for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do head -n \$i $IPFILE > out; /usr/bin/time -f %e --output=$LOGFILE".\$i.total" --append mpirun --mca btl tcp,self -machinefile out /root/collective_ops >> $LOGFILE".\$i.loop" ; done ; done"
 echo 'Done'
 
-# TODO: 
-# should replace all for loops with `cat ...` by:
-# while read i; do
-#   CODE...
-# done < FILE
+
+
+
+#### THEN: on ~jemeras/public dir, aggregate results
+# for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do cat *.$i.loop > $i'_loop'; cat *.$i.total > $i'_total'; done
