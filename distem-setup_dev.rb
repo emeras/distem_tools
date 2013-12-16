@@ -250,6 +250,10 @@ Distem.client do |cl|
   File.open(IPFILE,'w') do |f|
     iplist.each{ |ip| f.puts(ip) }
   end
+  # Create also a file with hostnames
+  File.open("#{IPFILE}_hostnames",'w') do |f|
+    vnodelist.each{ |name| f.puts(name) }
+  end
 #     puts 'Finalizing VNodes Config'
 #     vnodelist.each do |node|
 #       # Configure network on vnodes
