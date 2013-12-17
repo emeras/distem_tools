@@ -46,7 +46,7 @@ if $CHECKPOINT; then
     OPTION='syncft'
     BUILD_ALL_OPTIONS=$BUILD_ALL_OPTIONS' '$OPTION
     BUILD_PATH=$BUILD_PATH-$OPTION
-    COMPILE_OPTIONS=$COMPILE_OPTIONS" -O2" # set lower optimization level, O3 does not work for FT...
+    COMPILE_OPTIONS=$COMPILE_OPTIONS" -O0" # set lowest optimization level, FT does not work with O3, O2 nor O1
 else
     COMPILE_OPTIONS=$COMPILE_OPTIONS" -O3"
 fi

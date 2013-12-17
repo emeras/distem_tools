@@ -91,4 +91,4 @@ echo 'Done'
 
 
 #### THEN: on ~jemeras/public dir, aggregate results
-# for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do cat *.$i.loop > $i'_loop'; cat *.$i.total > $i'_total'; done
+# for i in 100 500 1000 2000 3000 4000 5000 6000 7000 8000 9000 10000; do cat *.$i.loop >> $i'_loop'; cat *.$i.total >> $i'_total'; done
