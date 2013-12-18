@@ -8,6 +8,8 @@ EXPE_RUN_TIME=1200
 
 nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64-syncft/tests/charm++/jacobi3d ; ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > ./jacobi.log &
 
+# security time to wait the experiment start
+sleep 30
 # failures
 ~jemeras/public/distem/distem_tools/churn_node.rb all $EXPE_RUN_TIME &
 
