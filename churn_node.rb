@@ -44,5 +44,17 @@ Distem.client do |cl|
   end 
   sleep(event_duration)
   cl.event_manager_stop
+  puts "Restarting nodes..."
+  if(node_name == "all")
+    nodes_to_restart = []
+    cl.vnodes_info.each {|n| 
+      if(n['status'] != 'RUNNING')
+        nodes_to_restart << n['name']
+      end                    
+    }
+    cl.vnodes_start(nodes_to_restart, async=false)
+  else  
+    cl.vnode_start(node_name, async=false)
+  end
 end
  
