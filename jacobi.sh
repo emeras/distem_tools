@@ -23,9 +23,12 @@ nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x
 wait
 cp "$LOGFILE.noFT" ~jemeras/public/
 
+# FT but no Failures
+nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64-syncft/tests/charm++/jacobi3d ; time ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > "$LOGFILE.FT_noFail" &
+wait
+cp "$LOGFILE.FT_noFail" ~jemeras/public/
 
-for i in {1..24}; do
-# one hour MTBF
+for i in 1 6 12 24 48; do
 nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64-syncft/tests/charm++/jacobi3d ; time ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > "$LOGFILE.FT_$i" &
 # security time to wait the experiment start
 sleep $SEC_TIME
