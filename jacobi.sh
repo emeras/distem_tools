@@ -20,6 +20,7 @@ LOGFILE="jacobi_`date +%s`.log"
 
 # No FT
 nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64/tests/charm++/jacobi3d ; time ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > "$LOGFILE.noFT" &
+wait
 cp "$LOGFILE.noFT" ~jemeras/public/
 
 
@@ -29,7 +30,8 @@ nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x
 # security time to wait the experiment start
 sleep $SEC_TIME
 # failures
-ruby ~jemeras/public/distem/distem_tools/churn_node.rb all $CHURN_DURATION $i &
+ruby ~jemeras/public/distem/distem_tools/churn_node.rb all $CHURN_DURATION $i
+wait
 # grab results
 cp "$LOGFILE.FT_$i" ~jemeras/public/
 done
