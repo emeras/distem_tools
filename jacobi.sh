@@ -17,12 +17,19 @@ taktuk -s -f /tmp/distem_vnodes_ip_hostnames broadcast exec [ hostname ]
 
 LOGFILE="jacobi_`date +%s`.log"
 
-nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64-syncft/tests/charm++/jacobi3d ; time ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > ./$LOGFILE &
 
+# No FT
+nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64/tests/charm++/jacobi3d ; time ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > "$LOGFILE.noFT" &
+cp "$LOGFILE.noFT" ~jemeras/public/
+
+
+for i in {1..24}; do
+# one hour MTBF
+nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x86_64-syncft/tests/charm++/jacobi3d ; time ./charmrun ++p $TOTAL_CORES ++nodelist $CHARM_HOME/nodelist ./jacobi3d $JACOBI_PARAMS" > "$LOGFILE.FT_$i" &
 # security time to wait the experiment start
 sleep $SEC_TIME
 # failures
-ruby ~jemeras/public/distem/distem_tools/churn_node.rb all $CHURN_DURATION &
-
+ruby ~jemeras/public/distem/distem_tools/churn_node.rb all $CHURN_DURATION $i &
 # grab results
-cp $LOGFILE ~jemeras/public/
+cp "$LOGFILE.FT_$i" ~jemeras/public/
+done
