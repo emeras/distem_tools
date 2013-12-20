@@ -22,7 +22,7 @@ nohup ssh root@`cat /tmp/distem_vnodes_ip | head -1` "cd $CHARM_HOME/net-linux-x
 # security time to wait the experiment start
 sleep $SEC_TIME
 # failures
-~jemeras/public/distem/distem_tools/churn_node.rb all $CHURN_DURATION &
+ruby ~jemeras/public/distem/distem_tools/churn_node.rb all $CHURN_DURATION &
 
 # grab results
 cp $LOGFILE ~jemeras/public/
