@@ -96,7 +96,7 @@ ssh root@$SERVER "apt-get install -y --force-yes liblz-dev lib32z-dev"
 # Install other usefull packages for NBP
 ssh root@$SERVER "apt-get install -y --force-yes fortran77-compiler gfortran gfortran-multilib"
 # compile charm
-ssh root@$SERVER "cd $CHARM_HOME ; rm -rf $BUILD* ; ./build charm++ $BUILD $BUILD_ALL_OPTIONS $COMPILE_OPTIONS"
+ssh root@$SERVER "cd $CHARM_HOME ; ./build charm++ $BUILD $BUILD_ALL_OPTIONS $COMPILE_OPTIONS"
 # compile stencil3D
 ssh root@$SERVER "make -C $CHARM_HOME/$BUILD_PATH/examples/charm++/load_balancing/stencil3d/"
 ssh root@$SERVER "make projections -C $CHARM_HOME/$BUILD_PATH/examples/charm++/load_balancing/stencil3d/"

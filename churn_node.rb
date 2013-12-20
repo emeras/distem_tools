@@ -24,7 +24,7 @@ Distem.client do |cl|
   ###   * Shape parameters for Weibull: k = 0.5 or k = 0.7
   ###   * MTBF of one processor: between 1 and 125 years
   ### /!\ We have to take a short MTBF value to have (at least) one failure.
-  failure_scale = 3600*24*365
+  failure_scale = 3600#*24*365
   failure_shape = 0.5
   generator_desc['date'] = { 'distribution' => 'weibull', 'scale'=>failure_scale, 'shape'=>failure_shape}
   
