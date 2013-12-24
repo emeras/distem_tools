@@ -7,7 +7,7 @@ node_name = ARGV[0]
 # Duration of disturbance
 event_duration = ARGV[1].to_i
 
-scale_hour = ARGV[2].to_i
+scale_mtbf = ARGV[2].to_i
 
 # Event Frequencies in seconds -- min and max values for uniform law parameters
 # event_freq_min = 1
@@ -26,7 +26,7 @@ Distem.client do |cl|
   ###   * Shape parameters for Weibull: k = 0.5 or k = 0.7
   ###   * MTBF of one processor: between 1 and 125 years
   ### /!\ We have to take a short MTBF value to have (at least) one failure.
-  failure_scale = 3600*scale_hour
+  failure_scale = 3600*24*scale_mtbf
   failure_shape = 0.5
   generator_desc['date'] = { 'distribution' => 'weibull', 'scale'=>failure_scale, 'shape'=>failure_shape}
   
